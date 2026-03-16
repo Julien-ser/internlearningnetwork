@@ -1,7 +1,13 @@
 import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
-// Create mock Prisma client
+// Mock bcrypt
+const bcryptMock = {
+  hash: jest.fn().mockResolvedValue('hashed_password' as any),
+  compare: jest.fn().mockResolvedValue(true as any),
+}
+
+// Mock Prisma client
 const prismaMock = {
   user: {
     findFirst: jest.fn(),
@@ -46,19 +52,21 @@ const prismaMock = {
   $disconnect: jest.fn(),
 }
 
-// Mock PrismaClient
+// Mock modules
+jest.mock('bcrypt', () => bcryptMock)
+
 jest.mock('@prisma/client', () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => prismaMock),
   }
 })
 
-// Export prisma mock
+// Export mocks
 export const prisma = prismaMock as any
+export const bcrypt = bcryptMock
+export { jwt }
 
 // Helper to reset all mocks
 export const resetMocks = () => {
   jest.clearAllMocks()
 }
-
-export { jwt }
