@@ -130,30 +130,40 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ error: 'Not authenticated' })
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        createdAt: true,
-        totalPoints: true,
-        level: {
-          select: {
-            levelNumber: true,
-            name: true
-          }
-        },
-        userSkills: {
-          include: {
-            skill: true
-          },
-          orderBy: {
-            claimedAt: 'desc'
-          }
-        }
-      }
-    })
+     const user = await prisma.user.findUnique({
+       where: { id: userId },
+       select: {
+         id: true,
+         email: true,
+         username: true,
+         createdAt: true,
+         totalPoints: true,
+         level: {
+           select: {
+             levelNumber: true,
+             name: true
+           }
+         },
+         userSkills: {
+           include: {
+             skill: true
+           },
+           orderBy: {
+             claimedAt: 'desc'
+           }
+         },
+         pointsLog: {
+           take: 10,
+           orderBy: {
+             createdAt: 'desc'
+           },
+           include: {
+             skill: true,
+             post: true
+           }
+         }
+       }
+     })
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
