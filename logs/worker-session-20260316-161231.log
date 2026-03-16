@@ -311,3 +311,75 @@ Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/
 Wrote file successfully.
 [0m
 📝 Log saved: logs/iteration-33.md
+📊 Token Usage: 5250 / Session: 11500 / 64000
+Unstaged changes after reset:
+M	logs/worker-session-20260316-161231.log
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   9fb6b6b..e674fd4  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 7/16 completed, 9 remaining
+   Next task: Implement basic point allocation logic: +10 points for creat...
+📍 Iteration 34 at Mon Mar 16 04:16:16 PM EDT 2026...
+✓ Progress: Git commit found
+📊 Task attempt 2: Progress detected, continuing...
+📚 Loading context from previous iteration attempts...
+   Found context in: iteration-33.md
+🤖 OpenCode processing: Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+I'll check the current state and complete the point allocation logic task. Let me first verify what's already implemented.
+[0m→ [0mRead server/src/claims/claims.controller.ts
+[0m→ [0mRead server/src/posts/posts.controller.ts
+[0m→ [0mRead TASKS.md
+[0m→ [0mRead README.md
+I can see that the point allocation logic is already implemented:
+- `posts.controller.ts:132-150` - Awards +10 points for post creation
+- `claims.controller.ts:83-92` - Awards +5 points to post author when skill is claimed
+
+The task is still marked as incomplete in TASKS.md. Let me mark it complete and commit the changes. I should also verify the README reflects the current project status.
+[0m
+[0m← [0mEdit TASKS.md
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
+@@ -12,9 +12,9 @@
+ ## Phase 2: Core Backend & Authentication
+ - [x] Implement user registration/login endpoints with JWT token generation using bcrypt for password hashing
+ - [x] Create CRUD API for blog posts with fields: title, content, skill_tags array, author_id, created_at; add validation middleware
+ - [x] Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
+-- [ ] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
++- [x] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+ 
+ ## Phase 3: Gamification & Frontend
+ - [ ] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
+ - [ ] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
+
+[0m
+The README already documents the point allocation system. I'll now mark the task as complete and commit the changes.
+[0m$ [0mgit add TASKS.md && git commit -m "feat: implement point allocation logic (+10 for posts, +5 for skill claims)" && git push origin main
+[main 7cd004c] feat: implement point allocation logic (+10 for posts, +5 for skill claims)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To https://github.com/Julien-ser/internlearningnetwork.git
+   e674fd4..7cd004c  main -> main
+[0m
+[0m$ [0mls -la .github/workflows/ 2>/dev/null || echo "No workflows directory"
+total 40
+drwxr-xr-x 2 julien julien 4096 Mar 16 11:36 .
+drwxr-xr-x 3 julien julien 4096 Mar 16 11:36 ..
+-rw-r--r-- 1 julien julien 6143 Mar 16 11:36 deploy-production.yml
+-rw-r--r-- 1 julien julien 4295 Mar 16 11:36 deploy-staging.yml
+-rw-r--r-- 1 julien julien 3218 Mar 16 11:36 report-ci-errors.yml
+-rw-r--r-- 1 julien julien 1287 Mar 16 11:39 test.yml
+-rw-r--r-- 1 julien julien 6783 Mar 16 11:36 wiggum-system-check.yml
+[0m
+Let me check the existing workflow to confirm it's properly configured for Node.js:
+[0m→ [0mRead .github/workflows/test.yml
+Task completed! The point allocation logic was already implemented:
+- **posts.controller.ts:132-150** awards +10 points for creating a post
+- **claims.controller.ts:83-92** awards +5 points to post authors when skills are claimed
+
+I've marked the task as complete in TASKS.md and pushed the changes to GitHub.
+📝 Log saved: logs/iteration-34.md
