@@ -17,7 +17,7 @@ const validateCreatePost = (req: any, res: any, next: any) => {
   try {
     createPostSchema.parse(req.body)
     next()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       return res.status(400).json({ 
         error: 'Validation failed',
@@ -36,7 +36,7 @@ const validateUpdatePost = (req: any, res: any, next: any) => {
     }
     updatePostSchema.parse(req.body)
     next()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       return res.status(400).json({ 
         error: 'Validation failed',
