@@ -243,8 +243,8 @@ export const updatePost = async (req: PostsRequest, res: Response) => {
       return res.status(403).json({ error: 'Not authorized to update this post' })
     }
 
-    // Update post fields
-    const updatedPost = await prisma.post.update({
+     // Update post fields
+     await prisma.post.update({
       where: { id: postId },
       data: {
         ...(title && { title }),

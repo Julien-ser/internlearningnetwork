@@ -6,7 +6,7 @@ import {
   updateSkill,
   deleteSkill
 } from './skills.controller'
-import { createSkillSchema, updateSkillSchema } from './skills.validation'
+import { updateSkillSchema } from './skills.validation'
 
 const router = Router()
 
