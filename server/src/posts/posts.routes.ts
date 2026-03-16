@@ -4,7 +4,8 @@ import {
   getPostById, 
   createPost, 
   updatePost, 
-  deletePost 
+  deletePost,
+  approvePost
 } from './posts.controller'
 import { authenticate } from '../auth/auth.middleware'
 import { createPostSchema, updatePostSchema } from './posts.validation'
@@ -54,5 +55,8 @@ router.get('/:id', getPostById)
 router.post('/', authenticate, validateCreatePost, createPost)
 router.put('/:id', authenticate, validateUpdatePost, updatePost)
 router.delete('/:id', authenticate, deletePost)
+
+// Approve post endpoint (assigns skills to author)
+router.put('/:id/approve', authenticate, approvePost)
 
 export default router

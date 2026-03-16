@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePost = exports.updatePost = exports.createPost = exports.getPostById = exports.getAllPosts = void 0;
+exports.approvePost = exports.deletePost = exports.updatePost = exports.createPost = exports.getPostById = exports.getAllPosts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 // GET all posts - with skill tags included
@@ -33,6 +33,7 @@ const getAllPosts = async (req, res) => {
             author: post.author,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
+            approved: post.approved,
             skill_tags: post.postSkills.map(ps => ps.skill)
         }));
         res.json({ posts: formattedPosts });
@@ -109,6 +110,24 @@ const createPost = async (req, res) => {
                 }
             }
         });
+        // Award 10 points for creating a post
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                totalPoints: {
+                    increment: 10
+                }
+            }
+        });
+        // Log the points for post creation
+        await prisma.pointsLog.create({
+            data: {
+                userId: userId,
+                postId: post.id,
+                points: 10,
+                reason: 'Created post'
+            }
+        });
         // Handle skill tags - create PostSkill entries
         if (skill_tags.length > 0) {
             // Find or create skills and create post-skill relationships
@@ -160,6 +179,7 @@ const createPost = async (req, res) => {
             author: postWithSkills.author,
             createdAt: postWithSkills.createdAt,
             updatedAt: postWithSkills.updatedAt,
+            approved: postWithSkills.approved,
             skill_tags: postWithSkills.postSkills.map(ps => ps.skill)
         };
         res.status(201).json({
@@ -306,3 +326,77 @@ const deletePost = async (req, res) => {
     }
 };
 exports.deletePost = deletePost;
+// PUT approve post (admin functionality - for now any authenticated user can approve)
+const approvePost = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+        const { id } = req.params;
+        const postId = parseInt(id);
+        // Check if post exists
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            include: {
+                postSkills: {
+                    include: {
+                        skill: true
+                    }
+                }
+            }
+        });
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        // Check if already approved
+        if (post.approved) {
+            return res.status(400).json({ error: 'Post is already approved' });
+        }
+        // Approve the post
+        const approvedPost = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                approved: true
+            }
+        });
+        // Assign skills to post author (if they don't already have them)
+        // This grants the author the skills they've taught through this post
+        if (post.postSkills.length > 0) {
+            await prisma.$transaction(async (tx) => {
+                for (const postSkill of post.postSkills) {
+                    const skillId = postSkill.skillId;
+                    const authorId = post.authorId;
+                    // Check if author already has this skill
+                    const existingUserSkill = await tx.userSkill.findUnique({
+                        where: {
+                            userId_skillId: {
+                                userId: authorId,
+                                skillId: skillId
+                            }
+                        }
+                    });
+                    // If author doesn't have this skill yet, assign it
+                    if (!existingUserSkill) {
+                        await tx.userSkill.create({
+                            data: {
+                                userId: authorId,
+                                skillId: skillId,
+                                sourcePostId: postId
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        res.json({
+            message: 'Post approved successfully and skills assigned to author',
+            post: approvedPost
+        });
+    }
+    catch (error) {
+        console.error('Approve post error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+exports.approvePost = approvePost;
