@@ -7,6 +7,7 @@ import {
   deleteSkill
 } from './skills.controller'
 import { createSkillSchema, updateSkillSchema } from './skills.validation'
+import { authenticate } from '../auth/auth.middleware'
 
 const router = Router()
 
@@ -50,8 +51,8 @@ router.get('/', getAllSkills)
 router.get('/:id', getSkillById)
 
 // Protected routes (require authentication - admin only in future)
-router.post('/', validateCreateSkill, createSkill)
-router.put('/:id', validateUpdateSkill, updateSkill)
-router.delete('/:id', deleteSkill)
+router.post('/', authenticate, validateCreateSkill, createSkill)
+router.put('/:id', authenticate, validateUpdateSkill, updateSkill)
+router.delete('/:id', authenticate, deleteSkill)
 
 export default router

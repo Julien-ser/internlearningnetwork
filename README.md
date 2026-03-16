@@ -118,7 +118,17 @@ internlearningnetwork/
   - `POST /api/auth/register` - User registration with email, username, password
   - `POST /api/auth/login` - User login, returns JWT token
   - `GET  /api/auth/me` - Get authenticated user's profile (requires Bearer token)
-- ⏳ Next: Create CRUD API for blog posts with validation
+- ✅ Created CRUD API for blog posts with validation middleware
+  - Posts include skill_tags array for associating skills
+- ✅ Built skill management system with full CRUD endpoints (authenticated)
+  - `GET    /api/skills` - List all skills
+  - `GET    /api/skills/:id` - Get skill details
+  - `POST   /api/skills` - Create new skill (requires authentication)
+  - `PUT    /api/skills/:id` - Update skill (requires authentication)
+  - `DELETE /api/skills/:id` - Delete skill (requires authentication)
+  - Skills can be associated with posts via skill_tags field
+- ✅ Implemented post approval system that assigns skills to authors
+  - `PUT /api/posts/:id/approve` - Approve post and automatically assign associated skills to the author (requires authentication)
 
 ## Getting Started
 
@@ -212,22 +222,18 @@ npm run lint
 
 ### Skills
 - `GET    /api/skills` - List all skills
-- `POST   /api/skills` - Create skill (admin)
-- `POST   /api/posts/:id/claim-skill` - Claim a skill from a post
-- `GET    /api/users/:id/skills` - Get user's earned skills
+- `GET    /api/skills/:id` - Get skill details
+- `POST   /api/skills` - Create new skill (requires authentication)
+- `PUT    /api/skills/:id` - Update skill (requires authentication)
+- `DELETE /api/skills/:id` - Delete skill (requires authentication)
 
-### Points & Levels
-- `GET /api/users/:id/points` - Get user's points and history
-- `GET /api/users/:id/level` - Get user's current level
+### Claims (Skill Claiming)
+- `POST   /api/claims/posts/:postId/skills/:skillId/claim` - Claim a skill from a post (requires authentication)
+  - Awards 5 points to the post author
+  - Adds the skill to the claimant's profile
+- `GET    /api/claims/user/skills` - Get authenticated user's claimed skills (requires authentication)
 
-### Leaderboard
-- `GET /api/leaderboard` - Users ranked by points/level
-
-## Key Features
-
-1. **User Authentication**: Secure JWT-based authentication with bcrypt password hashing
-2. **Blog Posts**: Create, read, update, delete posts with skill tag associations
-3. **Skill System**: 
+### Posts
    - Skills can be attached to posts (like hashtags)
    - Other users can "claim" skills from posts
    - Claiming a skill adds it to the user's profile AND awards points to the post author
