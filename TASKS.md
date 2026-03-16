@@ -13,7 +13,7 @@
 - [x] Implement user registration/login endpoints with JWT token generation using bcrypt for password hashing
 - [x] Create CRUD API for blog posts with fields: title, content, skill_tags array, author_id, created_at; add validation middleware
 - [x] Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
-- [ ] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+- [x] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
 
 ## Phase 3: Gamification & Frontend
 - [ ] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
