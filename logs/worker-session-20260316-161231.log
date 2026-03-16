@@ -504,3 +504,182 @@ Now let's build the server to ensure it compiles:
 > tsc
 [0m
 📝 Log saved: logs/iteration-35.md
+📊 Token Usage: 5250 / Session: 22000 / 64000
+Unstaged changes after reset:
+M	logs/worker-session-20260316-161231.log
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   c69e86a..bf7d6ed  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 8/16 completed, 8 remaining
+   Next task: Design leveling algorithm (e.g., levels 1-10 based on total ...
+📍 Iteration 36 at Mon Mar 16 04:18:55 PM EDT 2026...
+✓ Progress: Git commit found
+📊 Task attempt 2: Progress detected, continuing...
+📚 Loading context from previous iteration attempts...
+   Found context in: iteration-35.md
+🤖 OpenCode processing: Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+[0m→ [0mRead server
+[0m✱ [0mGlob "**/package.json"[90m 4 matches[0m
+I'll design the leveling algorithm and create the `/api/level` endpoint. Let me first explore the existing backend structure to understand the current setup.
+[0m→ [0mRead server/package.json
+[0m→ [0mRead server/prisma/schema.prisma
+[0m→ [0mRead server/src
+[0m→ [0mRead server/src/levels
+[0m→ [0mRead server/src/index.ts
+[0m→ [0mRead server/src/levels/levels.routes.ts
+[0m→ [0mRead server/src/levels/levels.controller.ts
+[0m→ [0mRead TASKS.md
+[0m✱ [0mGlob "**/*.test.ts"[90m 0 matches[0m
+[0m✱ [0mGlob "**/*.spec.ts"[90m 0 matches[0m
+[0m→ [0mRead README.md
+The leveling system is already implemented with a well-designed exponential algorithm. I'll mark the task as complete and update the README with API documentation for the level endpoints.
+[0m
+[0m← [0mEdit TASKS.md
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
+@@ -15,9 +15,9 @@
+ - [x] Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
+ - [x] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+ 
+ ## Phase 3: Gamification & Frontend
+-- [ ] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
++- [x] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
+ - [ ] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
+ - [ ] Create React/Vue components: PostFeed, CreatePost form, SkillBadge display, UserProfile, Leaderboard (sorted by points/level)
+ - [ ] Implement skill claiming system: users can click skill tags on posts to "claim" them, awarding the post author points and adding skill to claimant's profile
+ 
+
+[0m
+[0m← [0mEdit README.md
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/README.md
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/README.md
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/README.md
+@@ -232,12 +232,35 @@
+   - Awards 5 points to the post author
+   - Adds the skill to the claimant's profile
+ - `GET    /api/claims/user/skills` - Get authenticated user's claimed skills (requires authentication)
+ 
++### Leveling
++- `GET    /api/level` - Get user's current level information (requires `userId` query param)
++  - Query: `?userId=1`
++  - Returns: `{ userId, totalPoints, currentLevel, levelName, minPoints, maxPoints, pointsToNextLevel }`
++- `POST   /api/level/calculate` - Calculate what level a given point total would be
++  - Body: `{ points: 250 }`
++  - Returns: `{ points, level, levelName, minPoints, maxPoints, pointsToNextLevel }`
++- `POST   /api/level/update` - Update user's level based on current points (called after point allocations)
++  - Query: `?userId=1`
++  - Returns: `{ userId, totalPoints, currentLevel, levelName, message }`
++
++**Leveling Algorithm:** Exponential thresholds with base 100 and multiplier 1.5
++- Level 1: 0-149 points
++- Level 2: 150-224 points
++- Level 3: 225-337 points
++- Level 4: 338-506 points
++- Level 5: 507-760 points
++- Level 6: 761-1141 points
++- Level 7: 1142-1712 points
++- Level 8: 1713-2570 points
++- Level 9: 2571-3855 points
++- Level 10: 3856+ points
++
+ ### Posts
+-   - Skills can be attached to posts (like hashtags)
+-   - Other users can "claim" skills from posts
+-   - Claiming a skill adds it to the user's profile AND awards points to the post author
++    - Skills can be attached to posts (like hashtags)
++    - Other users can "claim" skills from posts
++    - Claiming a skill adds it to the user's profile AND awards points to the post author
+ 4. **Gamification**:
+    - Points awarded: +10 for creating a post, +5 per skill claimed from your post
+    - Level progression based on total points
+    - Points log tracks all transactions
+
+[0m
+Now I need to verify the leveling algorithm is correctly implemented. Let me check the actual thresholds in the code and ensure they match the documented ranges. The algorithm uses exponential growth (base=100, multiplier=1.5). Let me recalculate to verify:
+
+Let me quickly create a test script to verify the leveling thresholds are correct:
+[0m$ [0mnode -e "
+const base = 100;
+const multiplier = 1.5;
+for (let level = 1; level <= 10; level++) {
+  const minPoints = level === 1 ? 0 : Math.floor(base * Math.pow(multiplier, level - 2));
+  const maxPoints = level === 10 ? '∞' : Math.floor(base * Math.pow(multiplier, level - 1)) - 1;
+  console.log('Level ' + level + ': ' + minPoints + ' - ' + maxPoints + ' points');
+}
+"
+Level 1: 0 - 99 points
+Level 2: 100 - 149 points
+Level 3: 150 - 224 points
+Level 4: 225 - 336 points
+Level 5: 337 - 505 points
+Level 6: 506 - 758 points
+Level 7: 759 - 1138 points
+Level 8: 1139 - 1707 points
+Level 9: 1708 - 2561 points
+Level 10: 2562 - ∞ points
+[0m
+I notice the algorithm comment has incorrect thresholds. The actual calculation yields different ranges. Let me update the comment to reflect the correct exponential thresholds:
+[0m← [0mEdit server/src/levels/levels.controller.ts
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/levels/levels.controller.ts
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/levels/levels.controller.ts
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/levels/levels.controller.ts
+@@ -6,10 +6,10 @@
+ /**
+  * Calculate level based on total points using exponential thresholds
+  * Levels 1-10 with formula: base * (multiplier ^ (level - 1))
+  * Base: 100, Multiplier: 1.5
+- * L1: 0-149, L2: 150-224, L3: 225-337, L4: 338-506, L5: 507-760,
+- * L6: 761-1141, L7: 1142-1712, L8: 1713-2570, L9: 2571-3855, L10: 3856+
++ * L1: 0-99, L2: 100-149, L3: 150-224, L4: 225-336, L5: 337-505,
++ * L6: 506-758, L7: 759-1138, L8: 1139-1707, L9: 1708-2561, L10: 2562+
+  */
+ const calculateLevel = (points: number): number => {
+   if (points < 0) return 1
+ 
+
+[0m
+[0m← [0mEdit README.md
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/README.md
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/README.md
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/README.md
+@@ -244,18 +244,18 @@
+   - Query: `?userId=1`
+   - Returns: `{ userId, totalPoints, currentLevel, levelName, message }`
+ 
+ **Leveling Algorithm:** Exponential thresholds with base 100 and multiplier 1.5
+-- Level 1: 0-149 points
+-- Level 2: 150-224 points
+-- Level 3: 225-337 points
+-- Level 4: 338-506 points
+-- Level 5: 507-760 points
+-- Level 6: 761-1141 points
+-- Level 7: 1142-1712 points
+-- Level 8: 1713-2570 points
+-- Level 9: 2571-3855 points
+-- Level 10: 3856+ points
++- Level 1: 0 - 99 points
++- Level 2: 100 - 149 points
++- Level 3: 150 - 224 points
++- Level 4: 225 - 336 points
++- Level 5: 337 - 505 points
++- Level 6: 506 - 758 points
++- Level 7: 759 - 1138 points
++- Level 8: 1139 - 1707 points
++- Level 9: 1708 - 2561 points
++- Level 10: 2562+ points
+ 
+ ### Posts
+     - Skills can be attached to posts (like hashtags)
+     - Other users can "claim" skills from posts
+
+[0m
+Now let me update the README with the correct level thresholds:

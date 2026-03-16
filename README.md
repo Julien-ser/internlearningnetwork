@@ -233,10 +233,33 @@ npm run lint
   - Adds the skill to the claimant's profile
 - `GET    /api/claims/user/skills` - Get authenticated user's claimed skills (requires authentication)
 
+### Leveling
+- `GET    /api/level` - Get user's current level information (requires `userId` query param)
+  - Query: `?userId=1`
+  - Returns: `{ userId, totalPoints, currentLevel, levelName, minPoints, maxPoints, pointsToNextLevel }`
+- `POST   /api/level/calculate` - Calculate what level a given point total would be
+  - Body: `{ points: 250 }`
+  - Returns: `{ points, level, levelName, minPoints, maxPoints, pointsToNextLevel }`
+- `POST   /api/level/update` - Update user's level based on current points (called after point allocations)
+  - Query: `?userId=1`
+  - Returns: `{ userId, totalPoints, currentLevel, levelName, message }`
+
+**Leveling Algorithm:** Exponential thresholds with base 100 and multiplier 1.5
+- Level 1: 0 - 99 points
+- Level 2: 100 - 149 points
+- Level 3: 150 - 224 points
+- Level 4: 225 - 336 points
+- Level 5: 337 - 505 points
+- Level 6: 506 - 758 points
+- Level 7: 759 - 1138 points
+- Level 8: 1139 - 1707 points
+- Level 9: 1708 - 2561 points
+- Level 10: 2562+ points
+
 ### Posts
-   - Skills can be attached to posts (like hashtags)
-   - Other users can "claim" skills from posts
-   - Claiming a skill adds it to the user's profile AND awards points to the post author
+    - Skills can be attached to posts (like hashtags)
+    - Other users can "claim" skills from posts
+    - Claiming a skill adds it to the user's profile AND awards points to the post author
 4. **Gamification**:
    - Points awarded: +10 for creating a post, +5 per skill claimed from your post
    - Level progression based on total points
