@@ -1,6 +1,23 @@
 import request from 'supertest'
+import { jwt } from './setup'
+
+// Mock auth middleware before importing app
+jest.mock('../auth/auth.middleware', () => {
+  const mockAuth = (req: any, res: any, next: any) => {
+    req.user = {
+      id: 1,
+      email: 'test@example.com',
+      username: 'testuser'
+    }
+    next()
+  }
+  return {
+    authenticate: mockAuth,
+  }
+})
+
 import { app } from '../index'
-import { prisma, resetMocks, jwt } from './setup'
+import { prisma, resetMocks } from './setup'
 
 describe('Auth Controller', () => {
   beforeEach(() => {
