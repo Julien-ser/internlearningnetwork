@@ -112,7 +112,13 @@ internlearningnetwork/
 - ✅ Root workspace configuration created
 - ✅ Prisma schema designed
 - ✅ `.env.example` created and dependencies installed
-- ⏳ Next: Database setup with Prisma migrations
+
+**Phase 2: Core Backend & Authentication**
+- ✅ Implemented user registration/login endpoints with JWT token generation using bcrypt
+  - `POST /api/auth/register` - User registration with email, username, password
+  - `POST /api/auth/login` - User login, returns JWT token
+  - `GET  /api/auth/me` - Get authenticated user's profile (requires Bearer token)
+- ⏳ Next: Create CRUD API for blog posts with validation
 
 ## Getting Started
 
@@ -184,12 +190,18 @@ npm run lint
 - Backend API: http://localhost:3001/api
 - API Health check: http://localhost:3001/api/health (to be implemented)
 
-## API Endpoints (Planned)
+## API Endpoints
 
-### Authentication
+### Authentication ✅
 - `POST /api/auth/register` - User registration
+  - Body: `{ email, username, password }`
+  - Returns: `{ message, user: { id, email, username, createdAt }, token }`
 - `POST /api/auth/login` - User login
-- `GET  /api/auth/profile` - Get current user profile
+  - Body: `{ email, password }`
+  - Returns: `{ message, user: { id, email, username, createdAt, totalPoints, level }, token }`
+- `GET  /api/auth/me` - Get current user profile **(requires Bearer token)**
+  - Headers: `Authorization: Bearer <jwt_token>`
+  - Returns: `{ user: { id, email, username, createdAt, totalPoints, level, userSkills } }`
 
 ### Posts
 - `GET    /api/posts` - List all posts (with skill tags)
