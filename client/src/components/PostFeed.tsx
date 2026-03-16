@@ -22,21 +22,71 @@ const PostFeed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [claimedSkills, setClaimedSkills] = useState<Set<string>>(new Set())
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null)
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await axios.get('/api/posts')
-        setPosts(response.data.posts)
+        const token = localStorage.getItem('token')
+        if (token) {
+          const userResponse = await axios.get('/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          setCurrentUserId(userResponse.data.user.id)
+
+          const claimedResponse = await axios.get('/api/claims/user/skills', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          const claimedSet = new Set<string>()
+          claimedResponse.data.userSkills.forEach((us: { skill: Skill; claimedAt: string }) => {
+            claimedSet.add(`${us.skill.id}`)
+          })
+          setClaimedSkills(claimedSet)
+        }
+
+        const postsResponse = await axios.get('/api/posts')
+        setPosts(postsResponse.data.posts)
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to fetch posts')
+        setError(err.response?.data?.error || 'Failed to fetch data')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchPosts()
+    fetchInitialData()
   }, [])
+
+  const handleClaimSkill = async (postId: number, skillId: number) => {
+    if (!currentUserId) {
+      alert('Please log in to claim skills')
+      return
+    }
+
+    const skillKey = `${skillId}`
+    if (claimedSkills.has(skillKey)) {
+      alert('You have already claimed this skill')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      await axios.post(
+        `/api/claims/posts/${postId}/skills/${skillId}/claim`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      setClaimedSkills(prev => new Set(prev).add(skillKey))
+      alert('Skill claimed successfully!')
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to claim skill')
+    }
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -94,9 +144,20 @@ const PostFeed: React.FC = () => {
               <div className="post-skills">
                 <h4>Skills:</h4>
                 <div className="skills-container">
-                  {post.skill_tags.map(skill => (
-                    <SkillBadge key={skill.id} skill={skill} />
-                  ))}
+                  {post.skill_tags.map(skill => {
+                    const isOwnPost = currentUserId === post.authorId
+                    const isClaimed = claimedSkills.has(`${skill.id}`)
+
+                    return (
+                      <SkillBadge
+                        key={skill.id}
+                        skill={skill}
+                        onClick={!isOwnPost && !isClaimed ? () => handleClaimSkill(post.id, skill.id) : undefined}
+                        claimed={isClaimed}
+                        showDescription={false}
+                      />
+                    )
+                  })}
                 </div>
               </div>
             )}
