@@ -1,5 +1,8 @@
 -- Migration: add_optimization_indexes
--- This migration creates all tables and indexes based on the Prisma schema.
+-- Created at: 2026-03-16 00:00:00
+-- This migration creates all tables and adds indexes for foreign key optimization.
+
+BEGIN;
 
 -- CreateTable Level
 CREATE TABLE "levels" (
@@ -101,7 +104,6 @@ ALTER TABLE "points_log" ADD CONSTRAINT "points_log_postId_fkey" FOREIGN KEY ("p
 ALTER TABLE "points_log" ADD CONSTRAINT "points_log_skillId_fkey" FOREIGN KEY ("skillId") REFERENCES "skills"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- CreateIndexes for foreign key optimization
-
 CREATE INDEX "User_levelId_idx" ON "users"("levelId");
 CREATE INDEX "Post_authorId_idx" ON "posts"("authorId");
 CREATE INDEX "PostSkill_skillId_idx" ON "post_skills"("skillId");
@@ -110,3 +112,5 @@ CREATE INDEX "UserSkill_sourcePostId_idx" ON "user_skills"("sourcePostId");
 CREATE INDEX "PointsLog_userId_idx" ON "points_log"("userId");
 CREATE INDEX "PointsLog_postId_idx" ON "points_log"("postId");
 CREATE INDEX "PointsLog_skillId_idx" ON "points_log"("skillId");
+
+COMMIT;
