@@ -1,0 +1,168 @@
+.leaderboard {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.leaderboard h2 {
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-size: 2rem;
+}
+
+.leaderboard-subtitle {
+  text-align: center;
+  color: #666;
+  margin: -0.5rem 0 2rem 0;
+  font-size: 1rem;
+}
+
+.leaderboard-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.leaderboard-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.leaderboard-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.leaderboard-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: #f7f7f7;
+}
+
+.leaderboard-table tbody tr.top-1 {
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.1), transparent);
+}
+
+.leaderboard-table tbody tr.top-2 {
+  background: linear-gradient(to right, rgba(192, 192, 192, 0.1), transparent);
+}
+
+.leaderboard-table tbody tr.top-3 {
+  background: linear-gradient(to right, rgba(205, 127, 50, 0.1), transparent);
+}
+
+.rank-cell {
+  width: 100px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.medal {
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.rank-number {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.username-cell {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.level-cell .level-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #e6f0ff;
+  color: #667eea;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.points-cell .points {
+  font-weight: 600;
+  color: #38a169;
+  font-size: 1.125rem;
+}
+
+.leaderboard-loading,
+.leaderboard-error,
+.leaderboard-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.leaderboard-error {
+  color: #e53e3e;
+  background: #fed7d7;
+  border: 1px solid #fc8181;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-table thead {
+    display: none;
+  }
+
+  .leaderboard-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-bottom: 2px solid #eee;
+  }
+
+  .leaderboard-table td {
+    padding: 0.5rem 0;
+  }
+
+  .rank-cell::before {
+    content: 'Rank: ';
+    font-weight: 600;
+    color: #666;
+  }
+
+  .username-cell::before {
+    content: 'User: ';
+    font-weight: 600;
+    color: #666;
+  }
+
+  .level-cell::before {
+    content: 'Level: ';
+    font-weight: 600;
+    color: #666;
+  }
+
+  .points-cell::before {
+    content: 'Points: ';
+    font-weight: 600;
+    color: #666;
+  }
+}

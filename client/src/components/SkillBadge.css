@@ -1,0 +1,53 @@
+.skill-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  cursor: default;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.skill-badge.clickable {
+  cursor: pointer;
+}
+
+.skill-badge.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.skill-badge.claimed {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.skill-name {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.skill-description {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+.claimed-indicator {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #38ef7d;
+  color: #1a1a1a;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
