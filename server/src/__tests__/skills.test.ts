@@ -2,26 +2,31 @@ import request from 'supertest'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
 
+// Mock auth user
+const mockAuthUser = {
+  id: 1,
+  email: 'user@example.com',
+  username: 'testuser'
+}
+
+const mockAuthToken = 'mock-jwt-token'
+
+// Mock the authenticate middleware to check for Authorization header
+jest.mock('../auth/auth.middleware', () => ({
+  authenticate: (req: any, res: any, next: any) => {
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' })
+    }
+    // Accept any token for mocked auth
+    req.user = mockAuthUser
+    next()
+  }
+}))
+
 describe('Skills Controller', () => {
   beforeEach(() => {
     resetMocks()
-  })
-
-  const mockAuthUser = {
-    id: 1,
-    email: 'user@example.com',
-    username: 'testuser'
-  }
-
-  const mockAuthToken = 'mock-jwt-token'
-
-  // Mock the authenticate middleware
-  beforeAll(() => {
-    const authMiddleware = require('../auth/auth.middleware')
-    jest.spyOn(authMiddleware, 'authenticate').mockImplementation((req: any, res: any, next: any) => {
-      req.user = mockAuthUser
-      next()
-    })
   })
 
   describe('GET /api/skills', () => {
@@ -142,8 +147,8 @@ describe('Skills Controller', () => {
         description: 'Old description'
       }
 
-      prisma.skill.findUnique.mockResolvedValue(existingSkill as any)
-      prisma.skill.create.mockResolvedValue(null) // For duplicate check
+      prisma.skill.findUnique.mockResolvedValueOnce(existingSkill as any)
+      prisma.skill.findUnique.mockResolvedValueOnce(null) // duplicate check by name
       prisma.skill.update.mockResolvedValue({
         ...existingSkill,
         name: 'Updated Name',

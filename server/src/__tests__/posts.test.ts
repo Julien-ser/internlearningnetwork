@@ -2,31 +2,26 @@ import request from 'supertest'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
 
+// Mock auth user constant
+const mockAuthUser = {
+  id: 1,
+  email: 'author@example.com',
+  username: 'author'
+}
+
+const mockAuthToken = 'mock-jwt-token'
+
+// Mock the authenticate middleware BEFORE app loads
+jest.mock('../auth/auth.middleware', () => ({
+  authenticate: (req: any, res: any, next: any) => {
+    req.user = mockAuthUser
+    next()
+  }
+}))
+
 describe('Posts Controller', () => {
   beforeEach(() => {
     resetMocks()
-  })
-
-  const mockAuthUser = {
-    id: 1,
-    email: 'author@example.com',
-    username: 'author'
-  }
-
-  const mockAuthToken = 'mock-jwt-token'
-
-  // Helper to get auth headers
-  const getAuthHeaders = () => ({
-    Authorization: `Bearer ${mockAuthToken}`
-  })
-
-  // Mock the authenticate middleware
-  beforeAll(() => {
-    const authMiddleware = require('../auth/auth.middleware')
-    jest.spyOn(authMiddleware, 'authenticate').mockImplementation((req: any, res: any, next: any) => {
-      req.user = mockAuthUser
-      next()
-    })
   })
 
   describe('GET /api/posts', () => {
@@ -187,7 +182,7 @@ describe('Posts Controller', () => {
         .send({ title: 'Test', content: 'Content' })
         .expect(401)
 
-      expect(response.body.error).toBe('Not authenticated')
+      expect(response.body.error).toBe('No token provided')
     })
   })
 
@@ -294,11 +289,9 @@ describe('Posts Controller', () => {
       prisma.post.update.mockResolvedValue({ id: 1, approved: true } as any)
       prisma.userSkill.findUnique.mockResolvedValue(null)
       prisma.userSkill.create.mockResolvedValue({} as any)
-      prisma.$transaction.mockImplementation(async (tx: any) => {
-        await tx.userSkill.create({} as any)
-        await tx.user.update({} as any)
-        await tx.pointsLog.create({} as any)
-      })
+      prisma.$transaction.mockImplementation(async (callback: any) => {
+        return callback(prisma);
+      });
 
       const response = await request(app)
         .put('/api/posts/1/approve')

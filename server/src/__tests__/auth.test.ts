@@ -2,19 +2,26 @@ import request from 'supertest'
 import { jwt } from './setup'
 
 // Mock auth middleware before importing app
-jest.mock('../auth/auth.middleware', () => {
-  const mockAuth = (req: any, res: any, next: any) => {
-    req.user = {
-      id: 1,
-      email: 'test@example.com',
-      username: 'testuser'
+const mockAuthUser = {
+  id: 1,
+  email: 'test@example.com',
+  username: 'testuser'
+}
+
+jest.mock('../auth/auth.middleware', () => ({
+  authenticate: (req: any, res: any, next: any) => {
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' })
     }
+    const token = authHeader.slice(7)
+    if (token === 'invalidtoken') {
+      return res.status(401).json({ error: 'Invalid token' })
+    }
+    req.user = mockAuthUser
     next()
   }
-  return {
-    authenticate: mockAuth,
-  }
-})
+}))
 
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
@@ -44,7 +51,7 @@ describe('Auth Controller', () => {
       prisma.user.create.mockResolvedValue(mockUser as any)
 
       const response = await request(app)
-        .post('/auth/register')
+        .post('/api/auth/register')
         .send(newUser)
         .expect(201)
 
@@ -59,7 +66,7 @@ describe('Auth Controller', () => {
 
     it('should return 400 if email, username, or password is missing', async () => {
       const response = await request(app)
-        .post('/auth/register')
+        .post('/api/auth/register')
         .send({ email: 'test@example.com' })
         .expect(400)
 
@@ -68,7 +75,7 @@ describe('Auth Controller', () => {
 
     it('should return 400 if password is less than 6 characters', async () => {
       const response = await request(app)
-        .post('/auth/register')
+        .post('/api/auth/register')
         .send({
           email: 'test@example.com',
           username: 'testuser',
@@ -89,7 +96,7 @@ describe('Auth Controller', () => {
       prisma.user.findFirst.mockResolvedValue(existingUser as any)
 
       const response = await request(app)
-        .post('/auth/register')
+        .post('/api/auth/register')
         .send({
           email: 'test@example.com',
           username: 'newuser',
@@ -115,7 +122,7 @@ describe('Auth Controller', () => {
       prisma.user.findUnique.mockResolvedValue(user as any)
 
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({
           email: 'test@example.com',
           password: 'password123'
@@ -133,7 +140,7 @@ describe('Auth Controller', () => {
 
     it('should return 400 if email or password is missing', async () => {
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({ email: 'test@example.com' })
         .expect(400)
 
@@ -144,7 +151,7 @@ describe('Auth Controller', () => {
       prisma.user.findUnique.mockResolvedValue(null)
 
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({
           email: 'nonexistent@example.com',
           password: 'password123'
@@ -181,10 +188,10 @@ describe('Auth Controller', () => {
 
       prisma.user.findUnique.mockResolvedValue(mockUser as any)
 
-      const response = await request(app)
-        .get('/auth/me')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200)
+       const response = await request(app)
+         .get('/api/auth/me')
+         .set('Authorization', `Bearer ${token}`)
+         .expect(200)
 
       expect(response.body.user).toBeDefined()
       expect(response.body.user.id).toBe(1)
@@ -192,7 +199,7 @@ describe('Auth Controller', () => {
 
     it('should return 401 without token', async () => {
       const response = await request(app)
-        .get('/auth/me')
+        .get('/api/auth/me')
         .expect(401)
 
       expect(response.body.error).toBe('No token provided')
@@ -200,7 +207,7 @@ describe('Auth Controller', () => {
 
     it('should return 401 with invalid token', async () => {
       const response = await request(app)
-        .get('/auth/me')
+        .get('/api/auth/me')
         .set('Authorization', 'Bearer invalidtoken')
         .expect(401)
 

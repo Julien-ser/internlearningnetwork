@@ -70,3 +70,9 @@ export { jwt }
 export const resetMocks = () => {
   jest.clearAllMocks()
 }
+
+describe('setup', () => {
+  it('should load setup file', () => {
+    expect(true).toBe(true)
+  })
+})

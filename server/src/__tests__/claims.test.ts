@@ -2,32 +2,35 @@ import request from 'supertest'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
 
+const mockClaimerUser = {
+  id: 1,
+  email: 'claimer@example.com',
+  username: 'claimer'
+}
+
+const mockAuthorUser = {
+  id: 2,
+  email: 'author@example.com',
+  username: 'author'
+}
+
+const mockAuthToken = 'mock-jwt-token'
+
+// Mock the authenticate middleware BEFORE app loads
+jest.mock('../auth/auth.middleware', () => ({
+  authenticate: (req: any, res: any, next: any) => {
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' })
+    }
+    req.user = mockClaimerUser
+    next()
+  }
+}))
+
 describe('Claims Controller', () => {
   beforeEach(() => {
     resetMocks()
-  })
-
-  const mockClaimerUser = {
-    id: 1,
-    email: 'claimer@example.com',
-    username: 'claimer'
-  }
-
-  const mockAuthorUser = {
-    id: 2,
-    email: 'author@example.com',
-    username: 'author'
-  }
-
-  const mockAuthToken = 'mock-jwt-token'
-
-  // Mock the authenticate middleware
-  beforeAll(() => {
-    const authMiddleware = require('../auth/auth.middleware')
-    jest.spyOn(authMiddleware, 'authenticate').mockImplementation((req: any, res: any, next: any) => {
-      req.user = mockClaimerUser
-      next()
-    })
   })
 
   describe('POST /api/claims/posts/:postId/skills/:skillId/claim', () => {
@@ -47,11 +50,9 @@ describe('Claims Controller', () => {
       prisma.userSkill.create.mockResolvedValue({} as any)
       prisma.user.update.mockResolvedValue({} as any)
       prisma.pointsLog.create.mockResolvedValue({} as any)
-      prisma.$transaction.mockImplementation(async (tx: any) => {
-        await tx.userSkill.create({} as any)
-        await tx.user.update({} as any)
-        await tx.pointsLog.create({} as any)
-      })
+      prisma.$transaction.mockImplementation(async (callback: any) => {
+        return callback(prisma);
+      });
 
       const response = await request(app)
         .post('/api/claims/posts/1/skills/1/claim')
