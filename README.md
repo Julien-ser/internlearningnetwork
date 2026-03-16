@@ -200,6 +200,51 @@ npm run lint
 - Backend API: http://localhost:3001/api
 - API Health check: http://localhost:3001/api/health (to be implemented)
 
+## Deployment
+
+### Prerequisites
+- Accounts on Vercel/Netlify (for frontend) and Railway/Render (for backend)
+- A PostgreSQL database (e.g., Supabase, Neon, AWS RDS, or any PostgreSQL provider)
+- GitHub repository connected to your deployment platforms
+
+### Frontend Deployment (Vercel / Netlify)
+
+1. Import your repository as a new project in Vercel or Netlify.
+2. Set the **Root Directory** to `client` (since it's a monorepo).
+3. Configure build settings:
+   - **Build Command**: `npm run build` (or `npm run build --workspace=client`)
+   - **Output Directory**: `dist` (Vite's default)
+4. Add environment variables:
+   - `VITE_API_URL`: Your backend API URL (e.g., https://your-backend.onrender.com/api)
+5. Deploy. The platform will install dependencies, build, and serve the static files.
+
+### Backend Deployment (Railway / Render)
+
+1. Create a new service on Railway or Render and connect your repository.
+2. Set the **Root Directory** to `server`.
+3. Configure build and start commands:
+   - **Build Command**: `npm run build` (or `npm run build --workspace=server`)
+   - **Start Command**: `npm start` (or `npm start --workspace=server`)
+4. Add environment variables:
+   - `DATABASE_URL`: Your PostgreSQL connection string
+   - `JWT_SECRET`: A secure random string for JWT signing
+   - `NODE_ENV`: `production`
+   - (Optional) `PORT`: The port your server should listen on (default 3001)
+5. Add a **Post-Deploy** script (Railway) or **After Build** hook to run migrations and seed:
+   - `npx prisma migrate deploy`
+   - `npx prisma db seed` (optional, for demo data)
+6. Deploy. The platform will build the TypeScript code, apply database migrations, and start the server.
+
+### Database Setup
+- Create a PostgreSQL database and obtain the connection URL.
+- Ensure the database user has privileges to create tables and indexes.
+- Update the `DATABASE_URL` in your production environment.
+
+### Notes
+- The project uses Prisma ORM. Migrations are stored in `server/prisma/migrations`.
+- The seed script (`server/prisma/seed.ts`) creates demo skills, levels, and an admin user (`admin@example.com` / `admin123`).
+- For security, change the default admin password after first login and use a strong `JWT_SECRET`.
+
 ## API Endpoints
 
 ### Authentication ✅
