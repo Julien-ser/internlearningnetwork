@@ -191,3 +191,123 @@ Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/
 Now let me remove the unimplemented Points & Levels and Leaderboard sections from the API Endpoints, as they are not yet built:
 📝 Log saved: logs/iteration-32.md
 📊 Token Usage: 6250 / Session: 6250 / 64000
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   02e7b26..9fb6b6b  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 7/16 completed, 9 remaining
+   Next task: Implement basic point allocation logic: +10 points for creat...
+📍 Iteration 33 at Mon Mar 16 04:14:27 PM EDT 2026...
+🤖 OpenCode processing: Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "**/prisma/schema.prisma"[90m 1 match[0m
+[0m✱ [0mGlob "**/*.json"[90m 12 matches[0m
+I'll start by examining the current project structure and understanding what's already implemented before implementing the point allocation logic.
+[0m✱ [0mGlob "server/src/**/*.ts"[90m 12 matches[0m
+[0m→ [0mRead server/prisma/schema.prisma
+[0m→ [0mRead server/package.json
+[0m→ [0mRead server/src/posts/posts.controller.ts
+[0m→ [0mRead server/src/auth/auth.middleware.ts
+[0m→ [0mRead server/src/claims/claims.controller.ts
+[0m→ [0mRead TASKS.md
+Let me check the current TASKS.md to understand the exact status:
+I see that the point allocation logic is already implemented in the code, but the task is not marked as complete in TASKS.md. The implementation exists in:
+- `posts.controller.ts:132-150` - awards +10 points for post creation
+- `claims.controller.ts:83-92` - awards +5 points to author when skill is claimed
+
+However, I notice there are no tests yet. According to the instructions, I need to write tests alongside code. Let me create unit tests for the point allocation logic and then mark the task complete.
+
+First, let me check the current test setup:
+[0m✱ [0mGlob "server/**/*.test.ts"[90m 0 matches[0m
+[0m✱ [0mGlob "server/**/__tests__/**"[90m 0 matches[0m
+[0m
+[0m$ [0mls -la /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/
+total 32
+drwxr-xr-x 5 julien julien 4096 Mar 16 12:48 .
+drwxr-xr-x 9 julien julien 4096 Mar 16 12:06 ..
+drwxr-xr-x 6 julien julien 4096 Mar 16 12:48 dist
+-rw-r--r-- 1 julien julien  704 Mar 16 12:38 .eslintrc.json
+-rw-r--r-- 1 julien julien  920 Mar 16 12:48 package.json
+drwxr-xr-x 2 julien julien 4096 Mar 16 11:42 prisma
+drwxr-xr-x 6 julien julien 4096 Mar 16 12:25 src
+-rw-r--r-- 1 julien julien  466 Mar 16 11:41 tsconfig.json
+[0m
+[0m# [0mTodos
+[ ] Install Jest and testing dependencies (jest, ts-jest, supertest, @types/jest)
+[ ] Configure Jest with jest.config.js
+[ ] Create test database setup for testing
+[ ] Write tests for post creation point allocation (+10 points)
+[ ] Write tests for skill claiming point allocation (+5 points to author)
+[ ] Run tests to verify they pass
+[ ] Mark Phase 2 task as complete in TASKS.md
+[ ] Commit and push changes to GitHub
+[0m
+There are no tests yet. I need to set up testing with Jest and write tests for the point allocation logic. Let me create a todo list and implement this:
+[0m# [0mTodos
+[ ] Install Jest and testing dependencies (jest, ts-jest, supertest, @types/jest)
+[ ] Configure Jest with jest.config.js
+[ ] Create test database setup for testing
+[ ] Write tests for post creation point allocation (+10 points)
+[ ] Write tests for skill claiming point allocation (+5 points to author)
+[ ] Run tests to verify they pass
+[ ] Mark Phase 2 task as complete in TASKS.md
+[ ] Commit and push changes to GitHub
+[0m
+Now let me start implementing:
+[0m$ [0mcd server && npm install --save-dev jest ts-jest @types/jest supertest
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 219 packages, and audited 633 packages in 16s
+
+105 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (2 moderate, 9 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+[0m
+[0m# [0mTodos
+[x] Install Jest and testing dependencies (jest, ts-jest, supertest, @types/jest)
+[ ] Configure Jest with jest.config.js
+[ ] Create test database setup for testing
+[ ] Write tests for post creation point allocation (+10 points)
+[ ] Write tests for skill claiming point allocation (+5 points to author)
+[ ] Run tests to verify they pass
+[ ] Mark Phase 2 task as complete in TASKS.md
+[ ] Commit and push changes to GitHub
+[0m
+[0m→ [0mRead server/package.json
+[0m
+[0m← [0mEdit server/package.json
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/package.json
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/package.json
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/package.json
+@@ -7,9 +7,9 @@
+   "dev": "tsx watch src/index.ts",
+   "build": "tsc",
+   "start": "node dist/index.js",
+   "lint": "eslint src --ext .ts",
+-  "test": "echo \"No tests yet\""
++  "test": "jest"
+ },
+ "dependencies": {
+   "@prisma/client": "^5.0.0",
+   "bcrypt": "^5.1.0",
+
+[0m
+[0m← [0mWrite server/jest.config.js
+Wrote file successfully.
+[0m
+📝 Log saved: logs/iteration-33.md
