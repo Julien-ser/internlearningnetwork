@@ -147,3 +147,109 @@ dist/assets/index-327b08c1.js   142.79 kB │ gzip: 45.86 kB
 > internlearningnetwork-shared@0.0.1 build
 > tsc
 [0m
+[0m$ [0mgit add -A && git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   logs/iteration-27.md
+[0m
+Build succeeded! Both files have been properly fixed:
+
+1. `posts.routes.ts` - Both validation middleware now use proper TypeScript types (`Request, Response, NextFunction`)
+2. `auth.middleware.ts` - Contains the `DecodedToken` interface and uses proper typing
+
+The fixes are complete. Since the build passes, I'll commit these changes:
+[0m$ [0mgit diff --name-only
+logs/iteration-27.md
+[0m
+Interesting, only a log file is staged. Let me check what files have been modified:
+Let me search for any "as any" casts that might still need fixing in the server code:
+[0m✱ [0mGrep "as any"[90m in server · 4 matches[0m
+[0m
+[0m$ [0mcd /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src && grep -rn "as any" --include="*.ts" .
+./posts/posts.routes.ts:33:    // For updates, all fields are optional, so we need to check if body has any fields
+./skills/skills.routes.ts:31:     // For updates, all fields are optional, so we need to check if body has any fields
+[0m
+Good, those are just comments. Let me search specifically for TypeScript cast patterns in the codebase:
+[0m→ [0mRead server/src/skills/skills.routes.ts
+Good, no problematic casts. Let me also check the skills.routes.ts file to ensure it follows the same pattern as posts.routes.ts:
+[0m
+[0m$ [0mnpm test 2>&1 | head -100
+> internlearningnetwork@0.1.0 test
+> npm run test --workspaces
+
+
+> internlearningnetwork-client@0.0.1 test
+> echo "No tests yet"
+
+No tests yet
+
+> internlearningnetwork-server@0.0.1 test
+> echo "No tests yet"
+
+No tests yet
+
+> internlearningnetwork-shared@0.0.1 test
+> echo "No tests yet"
+
+No tests yet
+[0m
+All route files are properly typed. Let me check if there are any tests that might be failing:
+Let me check the git log to see if the code changes are already committed:
+[0m$ [0mgit log --oneline -5
+39230dc Iteration 26: Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
+84c9e71 fix: resolve indentation and lint issues; ensure skill management endpoints are functional
+7150ced Iteration 25: Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
+091c992 Iteration 23: Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
+5cb1b29 fix: replace 'any' with 'unknown' in catch blocks to satisfy TypeScript lint rules
+[0m
+Let me check what changes are currently staged:
+[0m$ [0mgit diff --cached --name-only
+logs/iteration-27.md
+[0m
+[0m→ [0mRead logs/iteration-27.md
+Let me read the iteration log file to understand what's expected:
+The code is already fixed and committed (iteration 26). The build passes, and there are no remaining code changes needed. The only change is the iteration log file. I'll commit that:
+[0m
+[0m$ [0mgit commit -m "Iteration 27: Verify build fixes from iteration 26 are working correctly"
+[main f475bbd] Iteration 27: Verify build fixes from iteration 26 are working correctly
+ 1 file changed, 149 insertions(+)
+ create mode 100644 logs/iteration-27.md
+[0m
+Done! The build errors have been resolved (already fixed in iteration 26), and the iteration log is committed.
+```
+
+## TASKS.md After Iteration
+
+```markdown
+# internlearningnetwork
+**Mission:** Allows interns all over the place to share anything they found/learned in a new blog-like system, with a gamified way of levelling up with new skills and points and also points for sharing something that gives other users skills.
+
+## Phase 1: Planning & Setup
+- [x] **Technical Stack Decision**: Node.js + Express (backend), React (frontend), PostgreSQL (database), Prisma (ORM), JWT (authentication)
+  - **Architecture**: Monorepo with `/client` (React + Vite), `/server` (Express + Prisma), `/shared` (TypeScript types/validations)
+  - **Database Schema**: users, posts, skills, user_skills, points_log, levels tables
+- [x] Set up monorepo structure with `/client`, `/server`, and `/shared` directories; initialize Git repository
+- [x] Design database schema with tables: `users`, `posts`, `skills`, `user_skills`, `points_log`, `levels`
+- [x] Create `.env.example` file and install dependencies: Express/Flask, React/Vue, Prisma/Sequelize/SQLAlchemy, JWT auth library
+
+## Phase 2: Core Backend & Authentication
+- [x] Implement user registration/login endpoints with JWT token generation using bcrypt for password hashing
+- [x] Create CRUD API for blog posts with fields: title, content, skill_tags array, author_id, created_at; add validation middleware
+- [ ] Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
+- [ ] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+
+## Phase 3: Gamification & Frontend
+- [ ] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
+- [ ] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
+- [ ] Create React/Vue components: PostFeed, CreatePost form, SkillBadge display, UserProfile, Leaderboard (sorted by points/level)
+- [ ] Implement skill claiming system: users can click skill tags on posts to "claim" them, awarding the post author points and adding skill to claimant's profile
+
+## Phase 4: Polish, Testing & Deployment
+- [ ] Write unit tests for backend (Jest/Pytest) covering auth, post CRUD, point calculations, and skill claiming logic with 80%+ coverage
+- [ ] Add input validation, rate limiting, and CORS configuration; set up error logging middleware and sanitize user inputs
+- [ ] Configure production database migrations, create seed data for demo skills, and optimize queries with indexes on foreign keys
+- [ ] Deploy to Vercel/Netlify (frontend) and Railway/Render (backend); create comprehensive README with setup instructions and API documentation
+```
+
+**Completed at:** Mon Mar 16 01:13:24 PM EDT 2026
