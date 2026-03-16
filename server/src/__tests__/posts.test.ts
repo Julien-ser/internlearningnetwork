@@ -1,6 +1,11 @@
 import request from 'supertest'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
+import type { Request, Response, NextFunction } from 'express'
+
+interface AuthRequest extends Request {
+  user?: { id: number; email: string; username: string };
+}
 
 // Mock auth user constant
 const mockAuthUser = {
@@ -13,7 +18,7 @@ const mockAuthToken = 'mock-jwt-token'
 
 // Mock the authenticate middleware BEFORE app loads
 jest.mock('../auth/auth.middleware', () => ({
-  authenticate: (req: any, res: any, next: any) => {
+  authenticate: (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'No token provided' })
@@ -47,7 +52,7 @@ describe('Posts Controller', () => {
         }
       ]
 
-      prisma.post.findMany.mockResolvedValue(mockPosts as any)
+      prisma.post.findMany.mockResolvedValue(mockPosts)
 
       const response = await request(app)
         .get('/api/posts')
@@ -84,7 +89,7 @@ describe('Posts Controller', () => {
         ]
       }
 
-      prisma.post.findUnique.mockResolvedValue(mockPost as any)
+      prisma.post.findUnique.mockResolvedValue(mockPost)
 
       const response = await request(app)
         .get('/api/posts/1')
@@ -128,12 +133,12 @@ describe('Posts Controller', () => {
         ]
       }
 
-      prisma.post.create.mockResolvedValue(createdPost as any)
-      prisma.post.findUnique.mockResolvedValue(createdPost as any)
-      prisma.skill.findUnique.mockResolvedValue({ id: 1, name: 'Skill1' } as any)
-      prisma.postSkill.upsert.mockResolvedValue({} as any)
-      prisma.user.update.mockResolvedValue({} as any)
-      prisma.pointsLog.create.mockResolvedValue({} as any)
+      prisma.post.create.mockResolvedValue(createdPost)
+      prisma.post.findUnique.mockResolvedValue(createdPost)
+      prisma.skill.findUnique.mockResolvedValue({ id: 1, name: 'Skill1' })
+      prisma.postSkill.upsert.mockResolvedValue({})
+      prisma.user.update.mockResolvedValue({})
+      prisma.pointsLog.create.mockResolvedValue({})
 
       const response = await request(app)
         .post('/api/posts')
@@ -183,10 +188,10 @@ describe('Posts Controller', () => {
         postSkills: []
       }
 
-      prisma.post.create.mockResolvedValue(createdPost as any)
-      prisma.post.findUnique.mockResolvedValue(createdPost as any)
-      prisma.user.update.mockResolvedValue({} as any)
-      prisma.pointsLog.create.mockResolvedValue({} as any)
+      prisma.post.create.mockResolvedValue(createdPost)
+      prisma.post.findUnique.mockResolvedValue(createdPost)
+      prisma.user.update.mockResolvedValue({})
+      prisma.pointsLog.create.mockResolvedValue({})
 
       await request(app)
         .post('/api/posts')
@@ -232,10 +237,10 @@ describe('Posts Controller', () => {
         postSkills: []
       }
 
-      prisma.post.findUnique.mockResolvedValue(existingPost as any)
-      prisma.post.update.mockResolvedValue(updatedPost as any)
-      prisma.post.findUnique.mockResolvedValue(updatedPost as any)
-      prisma.postSkill.deleteMany.mockResolvedValue({} as any)
+      prisma.post.findUnique.mockResolvedValue(existingPost)
+      prisma.post.update.mockResolvedValue(updatedPost)
+      prisma.post.findUnique.mockResolvedValue(updatedPost)
+      prisma.postSkill.deleteMany.mockResolvedValue({})
 
       const response = await request(app)
         .put('/api/posts/1')
@@ -275,7 +280,7 @@ describe('Posts Controller', () => {
         approved: false,
       }
 
-      prisma.post.findUnique.mockResolvedValue(existingPost as any)
+      prisma.post.findUnique.mockResolvedValue(existingPost)
 
       const response = await request(app)
         .put('/api/posts/1')
@@ -295,8 +300,8 @@ describe('Posts Controller', () => {
         authorId: mockAuthUser.id,
       }
 
-      prisma.post.findUnique.mockResolvedValue(existingPost as any)
-      prisma.post.delete.mockResolvedValue({} as any)
+      prisma.post.findUnique.mockResolvedValue(existingPost)
+      prisma.post.delete.mockResolvedValue({})
 
       const response = await request(app)
         .delete('/api/posts/1')
@@ -329,11 +334,11 @@ describe('Posts Controller', () => {
         ]
       }
 
-      prisma.post.findUnique.mockResolvedValue(post as any)
-      prisma.post.update.mockResolvedValue({ id: 1, approved: true } as any)
+      prisma.post.findUnique.mockResolvedValue(post)
+      prisma.post.update.mockResolvedValue({ id: 1, approved: true })
       prisma.userSkill.findUnique.mockResolvedValue(null)
-      prisma.userSkill.create.mockResolvedValue({} as any)
-      prisma.$transaction.mockImplementation(async (callback: any) => {
+      prisma.userSkill.create.mockResolvedValue({})
+      prisma.$transaction.mockImplementation(async (callback) => {
         return callback(prisma);
       });
 
@@ -353,7 +358,7 @@ describe('Posts Controller', () => {
         postSkills: []
       }
 
-      prisma.post.findUnique.mockResolvedValue(post as any)
+      prisma.post.findUnique.mockResolvedValue(post)
 
       const response = await request(app)
         .put('/api/posts/1/approve')

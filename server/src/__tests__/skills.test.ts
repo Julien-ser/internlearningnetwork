@@ -1,6 +1,11 @@
 import request from 'supertest'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
+import type { Request, Response, NextFunction } from 'express'
+
+interface AuthRequest extends Request {
+  user?: { id: number; email: string; username: string };
+}
 
 // Mock auth user
 const mockAuthUser = {
@@ -13,7 +18,7 @@ const mockAuthToken = 'mock-jwt-token'
 
 // Mock the authenticate middleware to check for Authorization header
 jest.mock('../auth/auth.middleware', () => ({
-  authenticate: (req: any, res: any, next: any) => {
+  authenticate: (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'No token provided' })
@@ -36,7 +41,7 @@ describe('Skills Controller', () => {
         { id: 2, name: 'React', description: 'React framework' }
       ]
 
-      prisma.skill.findMany.mockResolvedValue(mockSkills as any)
+      prisma.skill.findMany.mockResolvedValue(mockSkills)
 
       const response = await request(app)
         .get('/api/skills')
@@ -70,7 +75,7 @@ describe('Skills Controller', () => {
         ]
       }
 
-      prisma.skill.findUnique.mockResolvedValue(mockSkill as any)
+      prisma.skill.findUnique.mockResolvedValue(mockSkill)
 
       const response = await request(app)
         .get('/api/skills/1')
@@ -104,7 +109,7 @@ describe('Skills Controller', () => {
       }
 
       prisma.skill.findUnique.mockResolvedValue(null)
-      prisma.skill.create.mockResolvedValue(createdSkill as any)
+      prisma.skill.create.mockResolvedValue(createdSkill)
 
       const response = await request(app)
         .post('/api/skills')
@@ -138,7 +143,7 @@ describe('Skills Controller', () => {
 
     it('should return 400 if skill with same name exists', async () => {
       const existingSkill = { id: 1, name: 'Existing Skill' }
-      prisma.skill.findUnique.mockResolvedValue(existingSkill as any)
+      prisma.skill.findUnique.mockResolvedValue(existingSkill)
 
       const response = await request(app)
         .post('/api/skills')
@@ -167,13 +172,13 @@ describe('Skills Controller', () => {
         description: 'Old description'
       }
 
-      prisma.skill.findUnique.mockResolvedValueOnce(existingSkill as any)
+      prisma.skill.findUnique.mockResolvedValueOnce(existingSkill)
       prisma.skill.findUnique.mockResolvedValueOnce(null) // duplicate check by name
       prisma.skill.update.mockResolvedValue({
         ...existingSkill,
         name: 'Updated Name',
         description: 'Updated description'
-      } as any)
+      })
 
       const response = await request(app)
         .put('/api/skills/1')
@@ -220,8 +225,8 @@ describe('Skills Controller', () => {
   describe('DELETE /api/skills/:id', () => {
     it('should delete skill successfully', async () => {
       const existingSkill = { id: 1, name: 'To Delete' }
-      prisma.skill.findUnique.mockResolvedValue(existingSkill as any)
-      prisma.skill.delete.mockResolvedValue({} as any)
+      prisma.skill.findUnique.mockResolvedValue(existingSkill)
+      prisma.skill.delete.mockResolvedValue({})
 
       const response = await request(app)
         .delete('/api/skills/1')

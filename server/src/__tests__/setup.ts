@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
 // Mock bcrypt
 const bcryptMock = {
-  hash: jest.fn().mockResolvedValue('hashed_password' as any),
-  compare: jest.fn().mockResolvedValue(true as any),
+  hash: jest.fn().mockResolvedValue('hashed_password'),
+  compare: jest.fn().mockResolvedValue(true),
 }
 
 // Mock Prisma client
@@ -62,7 +61,7 @@ jest.mock('@prisma/client', () => {
 })
 
 // Export mocks
-export const prisma = prismaMock as any
+export const prisma = prismaMock
 export const bcrypt = bcryptMock
 export { jwt }
 
