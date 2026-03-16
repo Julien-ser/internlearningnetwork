@@ -24,7 +24,13 @@ app.use('/api/skills', skillsRoutes)
 app.use('/api/claims', claimsRoutes)
 app.use('/api/level', levelsRoutes)
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server running on port ${PORT}`)
-})
+// Export app for testing
+export { app }
+
+// Only start server if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Server running on port ${PORT}`)
+  })
+}

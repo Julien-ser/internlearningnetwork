@@ -1,16 +1,64 @@
 import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
-// Use SQLite in-memory database for tests
-const prisma = new PrismaClient()
+// Create mock Prisma client
+const prismaMock = {
+  user: {
+    findFirst: jest.fn(),
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+  post: {
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+  skill: {
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+  postSkill: {
+    findUnique: jest.fn(),
+    upsert: jest.fn(),
+    deleteMany: jest.fn(),
+  },
+  userSkill: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+  },
+  level: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+  },
+  pointsLog: {
+    create: jest.fn(),
+  },
+  $transaction: jest.fn(),
+  $disconnect: jest.fn(),
+}
 
-beforeAll(async () => {
-  // For testing, we'll use a different approach - we'll mock the database
-  // Actually, let's use a simpler approach with test doubles
+// Mock PrismaClient
+jest.mock('@prisma/client', () => {
+  return {
+    PrismaClient: jest.fn().mockImplementation(() => prismaMock),
+  }
 })
 
-afterAll(async () => {
-  await prisma.$disconnect()
-})
+// Export prisma mock
+export const prisma = prismaMock as any
 
-export { prisma, jwt }
+// Helper to reset all mocks
+export const resetMocks = () => {
+  jest.clearAllMocks()
+}
+
+export { jwt }
