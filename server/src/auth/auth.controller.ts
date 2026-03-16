@@ -62,8 +62,7 @@ export const register = async (req: Request, res: Response) => {
 
     const token = jwt.sign(
       { userId: user.id, email: user.email, username: user.username },
-      process.env.JWT_SECRET || 'default-secret',
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      process.env.JWT_SECRET || 'default-secret'
     )
 
     res.status(201).json({
@@ -105,10 +104,9 @@ export const login = async (req: Request, res: Response) => {
       })
     }
 
-     const secret = Buffer.from(process.env.JWT_SECRET || 'default-secret')
      const token = jwt.sign(
        { userId: user.id, email: user.email, username: user.username },
-       secret
+       process.env.JWT_SECRET || 'default-secret'
      )
 
     const { password: _, ...userWithoutPassword } = user

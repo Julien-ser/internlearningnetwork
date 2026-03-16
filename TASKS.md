@@ -11,7 +11,7 @@
 
 ## Phase 2: Core Backend & Authentication
 - [x] Implement user registration/login endpoints with JWT token generation using bcrypt for password hashing
-- [ ] Create CRUD API for blog posts with fields: title, content, skill_tags array, author_id, created_at; add validation middleware
+- [x] Create CRUD API for blog posts with fields: title, content, skill_tags array, author_id, created_at; add validation middleware
 - [ ] Build skill management system: endpoints to create/list skills, associate skills with posts, and assign skills to users upon post approval
 - [ ] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
 
