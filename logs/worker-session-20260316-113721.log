@@ -1524,3 +1524,97 @@ Perfect! The posts CRUD API is already fully implemented with:
 
 Now let me update TASKS.md to mark this task as complete:
 📝 Log saved: logs/iteration-11.md
+📊 Token Usage: 4500 / Session: 61250 / 64000
+Unstaged changes after reset:
+M	logs/worker-session-20260316-113721.log
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   3073854..9b06de0  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 5/16 completed, 11 remaining
+   Next task: Create CRUD API for blog posts with fields: title, content, ...
+📍 Iteration 12 at Mon Mar 16 12:02:44 PM EDT 2026...
+✓ Progress: Git commit found
+📊 Task attempt 3: Progress detected, continuing...
+📚 Loading context from previous iteration attempts...
+   Found context in: iteration-11.md
+🤖 OpenCode processing: Create CRUD API for blog posts with fields: title, content, skill_tags array, author_id, created_at; add validation middleware
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+[0m→ [0mRead server/src
+I'll continue where we left off. Let me first examine the current state of the project to understand what's been implemented for the posts CRUD API.
+[0m✱ [0mGlob "server/src/**/*.ts"[90m 7 matches[0m
+[0m→ [0mRead server/src/posts/posts.controller.ts
+[0m→ [0mRead server/src/posts/posts.routes.ts
+[0m→ [0mRead server/src/index.ts
+[0m→ [0mRead server/src/posts/posts.validation.ts
+Let me read the existing posts-related files to see what's already implemented:
+[0m→ [0mRead server/prisma/schema.prisma
+Let me check the Prisma schema to ensure the database model supports all the required fields:
+[0m→ [0mRead README.md
+Now let me check the README to see if it needs updating:
+Let me check if there are any test files for the posts API:
+[0m✱ [0mGlob "**/*.test.ts"[90m 0 matches[0m
+[0m✱ [0mGlob "**/*.spec.ts"[90m 0 matches[0m
+[0m✱ [0mGlob "tests/**/*.ts"[90m 0 matches[0m
+[0m→ [0mRead server/package.json
+Now let me check the package.json to see if testing dependencies are set up:
+📝 Log saved: logs/iteration-12.md
+📊 Token Usage: 4500 / Session: 65750 / 64000
+⚠️  Token budget exhausted this session (65750 / 64000)
+🔄 AUTO-RESTARTING WORKER SESSION...
+🔍 AGENTS.md not found. Running opencode /init...
+
+[0m▄[0m
+[90m█[0m[90m▀[0m[90m▀[0m[90m█[0m [90m█[0m[90m▀[0m[90m▀[0m[90m█[0m [90m█[0m[90m▀[0m[90m▀[0m[90m█[0m [90m█[0m[90m▀[0m[90m▀[0m[90m▄[0m [0m█[0m[0m▀[0m[0m▀[0m[0m▀[0m [0m█[0m[0m▀[0m[0m▀[0m[0m█[0m [0m█[0m[0m▀[0m[0m▀[0m[0m█[0m [0m█[0m[0m▀[0m[0m▀[0m[0m█[0m
+[90m█[0m[48;5;235m [0m[48;5;235m [0m[90m█[0m [90m█[0m[48;5;235m [0m[48;5;235m [0m[90m█[0m [90m█[0m[90m[48;5;235m▀[0m[90m[48;5;235m▀[0m[90m[48;5;235m▀[0m [90m█[0m[48;5;235m [0m[48;5;235m [0m[90m█[0m [0m█[0m[48;5;238m [0m[48;5;238m [0m[48;5;238m [0m [0m█[0m[48;5;238m [0m[48;5;238m [0m[0m█[0m [0m█[0m[48;5;238m [0m[48;5;238m [0m[0m█[0m [0m█[0m[0m[48;5;238m▀[0m[0m[48;5;238m▀[0m[0m[48;5;238m▀[0m
+[90m▀[0m[90m▀[0m[90m▀[0m[90m▀[0m [90m█[0m[90m▀[0m[90m▀[0m[90m▀[0m [90m▀[0m[90m▀[0m[90m▀[0m[90m▀[0m [90m▀[0m[38;5;235m▀[0m[38;5;235m▀[0m[90m▀[0m [0m▀[0m[0m▀[0m[0m▀[0m[0m▀[0m [0m▀[0m[0m▀[0m[0m▀[0m[0m▀[0m [0m▀[0m[0m▀[0m[0m▀[0m[0m▀[0m [0m▀[0m[0m▀[0m[0m▀[0m[0m▀[0m
+
+Commands:
+  opencode completion          generate shell completion script
+  opencode acp                 start ACP (Agent Client Protocol) server
+  opencode mcp                 manage MCP (Model Context Protocol) servers
+  opencode [project]           start opencode tui                                          [default]
+  opencode attach <url>        attach to a running opencode server
+  opencode run [message..]     run opencode with a message
+  opencode debug               debugging and troubleshooting tools
+  opencode auth                manage credentials
+  opencode agent               manage agents
+  opencode upgrade [target]    upgrade opencode to the latest or a specific version
+  opencode uninstall           uninstall opencode and remove all related files
+  opencode serve               starts a headless opencode server
+  opencode web                 start opencode server and open web interface
+  opencode models [provider]   list all available models
+  opencode stats               show token usage and cost statistics
+  opencode export [sessionID]  export session data as JSON
+  opencode import <file>       import session data from JSON file or URL
+  opencode github              manage GitHub agent
+  opencode pr <number>         fetch and checkout a GitHub PR branch, then run opencode
+  opencode session             manage sessions
+  opencode db                  database tools
+
+Positionals:
+  project  path to start opencode in                                                        [string]
+
+Options:
+  -h, --help         show help                                                             [boolean]
+  -v, --version      show version number                                                   [boolean]
+      --print-logs   print logs to stderr                                                  [boolean]
+      --log-level    log level                  [string] [choices: "DEBUG", "INFO", "WARN", "ERROR"]
+      --port         port to listen on                                         [number] [default: 0]
+      --hostname     hostname to listen on                           [string] [default: "127.0.0.1"]
+      --mdns         enable mDNS service discovery (defaults hostname to 0.0.0.0)
+                                                                          [boolean] [default: false]
+      --mdns-domain  custom domain name for mDNS service (default: opencode.local)
+                                                                [string] [default: "opencode.local"]
+      --cors         additional domains to allow for CORS                      [array] [default: []]
+  -m, --model        model to use in the format of provider/model                           [string]
+  -c, --continue     continue the last session                                             [boolean]
+  -s, --session      session id to continue                                                 [string]
+      --fork         fork the session when continuing (use with --continue or --session)   [boolean]
+      --prompt       prompt to use                                                          [string]
+      --agent        agent to use                                                           [string]
+⚠️  Could not generate AGENTS.md
+🔧 Git repository already exists. Verifying remote setup...
+✅ Repository already exists on GitHub: Julien-ser/internlearningnetwork
