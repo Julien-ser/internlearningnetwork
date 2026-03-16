@@ -1656,3 +1656,62 @@ To https://github.com/Julien-ser/internlearningnetwork.git
 [0m
 Skill claiming system implemented. Tasks 21 and 22 marked complete. Committed and pushed.
 📝 Log saved: logs/iteration-41.md
+📊 Token Usage: 7750 / Session: 58500 / 64000
+Unstaged changes after reset:
+M	logs/worker-session-20260316-161231.log
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   442f08d..c6ac59c  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 12/16 completed, 4 remaining
+   Next task: Write unit tests for backend (Jest/Pytest) covering auth, po...
+📍 Iteration 42 at Mon Mar 16 04:41:46 PM EDT 2026...
+🤖 OpenCode processing: Write unit tests for backend (Jest/Pytest) covering auth, post CRUD, point calculations, and skill claiming logic with 80%+ coverage
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "package.json"[90m 4 matches[0m
+[0m✱ [0mGlob "**/package.json"[90m 4 matches[0m
+[0m✱ [0mGlob "TASKS.md"[90m 1 match[0m
+I'll check the current project state and implement the unit tests for the backend with 80%+ coverage.
+[0m→ [0mRead server/package.json
+[0m→ [0mRead TASKS.md
+[0m✱ [0mGlob "server/**/*.js"[90m 15 matches[0m
+[0m✱ [0mGlob "server/**/*.ts"[90m 14 matches[0m
+[0m→ [0mRead server/jest.config.js
+[0m✱ [0mGlob "server/**/*.test.ts"[90m 0 matches[0m
+[0m✱ [0mGlob "tests/**/*"[90m 0 matches[0m
+[0m✱ [0mGlob "server/**/*.spec.ts"[90m 0 matches[0m
+[0m→ [0mRead server/src/auth/auth.controller.ts
+[0m→ [0mRead server/src/auth/auth.middleware.ts
+[0m→ [0mRead server/src/posts/posts.controller.ts
+[0m→ [0mRead server/src/posts/posts.validation.ts
+[0m→ [0mRead server/src/skills/skills.controller.ts
+[0m→ [0mRead server/src/levels/levels.controller.ts
+[0m→ [0mRead server/src/claims/claims.controller.ts
+[0m✱ [0mGlob "prisma/schema.prisma"[90m 0 matches[0m
+[0m✱ [0mGlob "**/schema.prisma"[90m 1 match[0m
+[0m→ [0mRead .env.example
+[0m
+[0m$ [0mls -la /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/
+total 36
+drwxr-xr-x 5 julien julien 4096 Mar 16 16:15 .
+drwxr-xr-x 9 julien julien 4096 Mar 16 12:06 ..
+drwxr-xr-x 7 julien julien 4096 Mar 16 16:18 dist
+-rw-r--r-- 1 julien julien  704 Mar 16 12:38 .eslintrc.json
+-rw-r--r-- 1 julien julien  520 Mar 16 16:15 jest.config.js
+-rw-r--r-- 1 julien julien 1009 Mar 16 16:15 package.json
+drwxr-xr-x 2 julien julien 4096 Mar 16 11:42 prisma
+drwxr-xr-x 7 julien julien 4096 Mar 16 16:18 src
+-rw-r--r-- 1 julien julien  466 Mar 16 11:41 tsconfig.json
+[0m
+[0m→ [0mRead server/prisma/schema.prisma
+Now I'll create a comprehensive test suite. Let me start by creating the test setup and test files.
+
+First, I'll create the test setup file with an in-memory SQLite database:
+[0m
+[0m← [0mWrite server/src/__tests__/setup.ts
+Wrote file successfully.
+[0m
+📝 Log saved: logs/iteration-42.md
