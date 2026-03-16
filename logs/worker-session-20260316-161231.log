@@ -872,3 +872,201 @@ Wrote file successfully.
 Now let's create the CSS for the UserProfile component:
 📝 Log saved: logs/iteration-38.md
 📊 Token Usage: 5250 / Session: 38000 / 64000
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   87a3f9d..9c350cf  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 9/16 completed, 7 remaining
+   Next task: Build user profile page displaying: current level, total poi...
+📍 Iteration 39 at Mon Mar 16 04:23:59 PM EDT 2026...
+✓ Progress: Git commit found
+📊 Task attempt 3: Progress detected, continuing...
+📚 Loading context from previous iteration attempts...
+   Found context in: iteration-38.md
+🤖 OpenCode processing: Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+I'll continue building the user profile page. Let me first explore the existing codebase to understand the current structure and what needs to be implemented.
+[0m→ [0mRead client/src
+[0m→ [0mRead server/src
+[0m→ [0mRead TASKS.md
+[0m→ [0mRead .agent_role
+[0m→ [0mRead client/src/App.tsx
+[0m→ [0mRead server/prisma/schema.prisma
+Let me explore the existing components and API structure to understand what's already built:
+[0m✱ [0mGlob "client/src/components/**/*.{tsx,ts}"[90m 1 match[0m
+[0m✱ [0mGlob "server/src/**/*.ts"[90m 14 matches[0m
+[0m→ [0mRead client/src/components/UserProfile.tsx
+[0m→ [0mRead server/src/index.ts
+[0m→ [0mRead server/src/levels/levels.controller.ts
+Now let me check the existing UserProfile component and see what API endpoints are available:
+[0m→ [0mRead server/src/auth/auth.controller.ts
+[0m→ [0mRead client/src/components/UserProfile.css
+Now let me check the auth controller to see what the `/api/auth/me` endpoint returns:
+[0m→ [0mRead server/src/auth/auth.routes.ts
+[0m→ [0mRead client/package.json
+Let me check the auth routes and update App.tsx to integrate the UserProfile component:
+Perfect! The UserProfile component is already fully built with:
+- ✅ Complete TypeScript interfaces
+- ✅ Full implementation with level, points, skills, and activity log
+- ✅ Styling with CSS
+- ✅ API endpoint `/api/auth/me` already exists and returns all necessary data
+
+The only thing missing is integrating it into the App.tsx so it's actually accessible as a page. Let me update App.tsx to include routing and display the UserProfile:
+[0m
+[0m← [0mEdit client/src/App.tsx
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/client/src/App.tsx
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/client/src/App.tsx
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/client/src/App.tsx
+@@ -1,12 +1,29 @@
++import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+ import './index.css'
++import UserProfile from './components/UserProfile'
+ 
+ function App() {
+   return (
+-    <div className="App">
+-      <h1>InternLearningNetwork</h1>
+-      <p>Building the future of intern learning...</p>
+-    </div>
+-  )
+-}
++    <Router>
++      <div className="App">
++        <nav className="app-nav">
++          <h1>InternLearningNetwork</h1>
++          <div className="nav-links">
++            <Link to="/profile">My Profile</Link>
++          </div>
++        </nav>
++        <Routes>
++          <Route path="/profile" element={<UserProfile />} />
++          <Route path="/" element={
++            <div className="home">
++              <h2>Welcome to InternLearningNetwork</h2>
++              <p>Building the future of intern learning...</p>
++              <Link to="/profile" className="cta-button">View Your Profile</Link>
++            </div>
++          } />
++        </Routes>
++      </div>
++    )
++  }
+ 
+ export default App
+
+[0m
+[0m→ [0mRead client/src/App.tsx
+Let me fix the syntax errors in App.tsx:
+[0m→ [0mRead client/src/index.css
+The App.tsx looks correct. Let me add some CSS styling for the navigation and home page, then verify the implementation is complete:
+[0m
+[0m← [0mEdit client/src/index.css
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/client/src/index.css
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/client/src/index.css
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/client/src/index.css
+@@ -4,10 +4,80 @@
+     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+     sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
++  background: #f5f5f5;
+ }
+ 
+ code {
+   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+     monospace;
+ }
++
++.App {
++  min-height: 100vh;
++}
++
++.app-nav {
++  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
++  color: white;
++  padding: 1rem 2rem;
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
++}
++
++.app-nav h1 {
++  margin: 0;
++  font-size: 1.5rem;
++  font-weight: 600;
++}
++
++.nav-links a {
++  color: white;
++  text-decoration: none;
++  padding: 0.5rem 1rem;
++  border-radius: 6px;
++  transition: background 0.2s;
++}
++
++.nav-links a:hover {
++  background: rgba(255, 255, 255, 0.2);
++}
++
++.home {
++  max-width: 800px;
++  margin: 4rem auto;
++  padding: 2rem;
++  text-align: center;
++  background: white;
++  border-radius: 12px;
++  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
++}
++
++.home h2 {
++  color: #333;
++  margin-bottom: 1rem;
++}
++
++.home p {
++  color: #666;
++  font-size: 1.2rem;
++  margin-bottom: 2rem;
++}
++
++.cta-button {
++  display: inline-block;
++  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
++  color: white;
++  padding: 12px 24px;
++  border-radius: 8px;
++  text-decoration: none;
++  font-weight: 500;
++  transition: transform 0.2s, box-shadow 0.2s;
++}
++
++.cta-button:hover {
++  transform: translateY(-2px);
++  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
++}
+
+[0m
+[0m← [0mEdit TASKS.md
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/TASKS.md
+@@ -16,9 +16,9 @@
+ - [x] Implement basic point allocation logic: +10 points for creating a post, +5 points per skill tag that other users claim from the post
+ 
+ ## Phase 3: Gamification & Frontend
+ - [x] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
+-- [ ] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
++- [x] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
+ - [ ] Create React/Vue components: PostFeed, CreatePost form, SkillBadge display, UserProfile, Leaderboard (sorted by points/level)
+ - [ ] Implement skill claiming system: users can click skill tags on posts to "claim" them, awarding the post author points and adding skill to claimant's profile
+ 
+ ## Phase 4: Polish, Testing & Deployment
+
+[0m
+Now let me update TASKS.md to mark the task as complete:

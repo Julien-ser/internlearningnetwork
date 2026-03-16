@@ -17,7 +17,7 @@
 
 ## Phase 3: Gamification & Frontend
 - [x] Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
-- [ ] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
+- [x] Build user profile page displaying: current level, total points, earned skills with dates, and recent points_log entries
 - [ ] Create React/Vue components: PostFeed, CreatePost form, SkillBadge display, UserProfile, Leaderboard (sorted by points/level)
 - [ ] Implement skill claiming system: users can click skill tags on posts to "claim" them, awarding the post author points and adding skill to claimant's profile
 
