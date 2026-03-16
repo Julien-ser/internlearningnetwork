@@ -1,15 +1,20 @@
 import request from 'supertest'
-import { jwt } from './setup'
+import { Request, Response, NextFunction } from 'express'
+import { User } from '@prisma/client'
 
 // Mock auth middleware before importing app
 const mockAuthUser = {
   id: 1,
   email: 'test@example.com',
   username: 'testuser'
+} as User
+
+interface AuthenticatedRequest extends Request {
+  user?: User
 }
 
 jest.mock('../auth/auth.middleware', () => ({
-  authenticate: (req: any, res: any, next: any) => {
+  authenticate: (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'No token provided' })
@@ -48,7 +53,7 @@ describe('Auth Controller', () => {
       }
 
       prisma.user.findFirst.mockResolvedValue(null)
-      prisma.user.create.mockResolvedValue(mockUser as any)
+      prisma.user.create.mockResolvedValue(mockUser as User)
 
       const response = await request(app)
         .post('/api/auth/register')
@@ -93,7 +98,7 @@ describe('Auth Controller', () => {
         username: 'existinguser',
       }
 
-      prisma.user.findFirst.mockResolvedValue(existingUser as any)
+      prisma.user.findFirst.mockResolvedValue(existingUser as User)
 
       const response = await request(app)
         .post('/api/auth/register')
@@ -119,7 +124,7 @@ describe('Auth Controller', () => {
         createdAt: new Date(),
       }
 
-      prisma.user.findUnique.mockResolvedValue(user as any)
+      prisma.user.findUnique.mockResolvedValue(user as User)
 
       const response = await request(app)
         .post('/api/auth/login')
@@ -186,7 +191,7 @@ describe('Auth Controller', () => {
         pointsLog: []
       }
 
-      prisma.user.findUnique.mockResolvedValue(mockUser as any)
+       prisma.user.findUnique.mockResolvedValue(mockUser as unknown as User)
 
        const response = await request(app)
          .get('/api/auth/me')

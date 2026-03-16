@@ -1,24 +1,39 @@
 import request from 'supertest'
+import { Request, Response, NextFunction } from 'express'
+import { PrismaClient } from '@prisma/client'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
+import { User, PostSkill, UserSkill, PointsLog } from '@prisma/client'
+
+interface TransactionPrisma {
+  postSkill: { findUnique: jest.Mock };
+  userSkill: { findUnique: jest.Mock; create: jest.Mock };
+  user: { update: jest.Mock };
+  pointsLog: { create: jest.Mock };
+  $transaction: jest.Mock;
+}
 
 const mockClaimerUser = {
   id: 1,
   email: 'claimer@example.com',
   username: 'claimer'
-}
+} as User
 
 const mockAuthorUser = {
   id: 2,
   email: 'author@example.com',
   username: 'author'
-}
+} as User
 
 const mockAuthToken = 'mock-jwt-token'
 
+interface AuthenticatedRequest extends Request {
+  user?: User
+}
+
 // Mock the authenticate middleware BEFORE app loads
 jest.mock('../auth/auth.middleware', () => ({
-  authenticate: (req: any, res: any, next: any) => {
+  authenticate: (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'No token provided' })
@@ -45,13 +60,13 @@ describe('Claims Controller', () => {
         }
       }
 
-      prisma.postSkill.findUnique.mockResolvedValue(postSkill as any)
+      prisma.postSkill.findUnique.mockResolvedValue(postSkill as unknown as PostSkill)
       prisma.userSkill.findUnique.mockResolvedValue(null)
-      prisma.userSkill.create.mockResolvedValue({} as any)
-      prisma.user.update.mockResolvedValue({} as any)
-      prisma.pointsLog.create.mockResolvedValue({} as any)
-      prisma.$transaction.mockImplementation(async (callback: any) => {
-        return callback(prisma);
+      prisma.userSkill.create.mockResolvedValue({} as unknown as UserSkill)
+      prisma.user.update.mockResolvedValue({} as unknown as User)
+      prisma.pointsLog.create.mockResolvedValue({} as unknown as PointsLog)
+      prisma.$transaction.mockImplementation(async (callback: (prisma: TransactionPrisma) => Promise<unknown>) => {
+        return await callback(prisma as TransactionPrisma);
       });
 
       const response = await request(app)
