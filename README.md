@@ -111,25 +111,78 @@ internlearningnetwork/
 - ✅ Monorepo structure initialized with package.json files
 - ✅ Root workspace configuration created
 - ✅ Prisma schema designed
-- ⏳ Next: Install dependencies
+- ✅ `.env.example` created and dependencies installed
+- ⏳ Next: Database setup with Prisma migrations
 
-## Getting Started (After Dependencies Installation)
+## Getting Started
 
-### Backend Setup (server/)
+### Prerequisites
+- Node.js 18+ installed
+- PostgreSQL database running
+- Git
+
+### 1. Environment Configuration
+
+Copy the example environment file and update with your values:
+
 ```bash
-cd server
-npm install
+cp .env.example .env
+```
+
+Edit `.env` and configure:
+- `DATABASE_URL`: Your PostgreSQL connection string
+- `JWT_SECRET`: A secure random string for JWT signing
+
+### 2. Database Setup
+
+Generate Prisma client and create/update database schema:
+
+```bash
 npx prisma generate
 npx prisma db push
+```
+
+(Optional) Seed the database with initial data:
+
+```bash
+npx prisma db seed
+```
+
+### 3. Running the Application
+
+**Development mode** (runs both frontend and backend):
+
+```bash
 npm run dev
 ```
 
-### Frontend Setup (client/)
+Or run them separately:
+
 ```bash
-cd client
-npm install
-npm run dev
+# Backend only (server on port 3001)
+npm run dev:server
+
+# Frontend only (client on port 5173)
+npm run dev:client
 ```
+
+**Build for production:**
+
+```bash
+npm run build
+```
+
+**Run linter:**
+
+```bash
+npm run lint
+```
+
+### 4. Access the Application
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3001/api
+- API Health check: http://localhost:3001/api/health (to be implemented)
 
 ## API Endpoints (Planned)
 

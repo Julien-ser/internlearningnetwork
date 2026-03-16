@@ -7,7 +7,7 @@
   - **Database Schema**: users, posts, skills, user_skills, points_log, levels tables
 - [x] Set up monorepo structure with `/client`, `/server`, and `/shared` directories; initialize Git repository
 - [x] Design database schema with tables: `users`, `posts`, `skills`, `user_skills`, `points_log`, `levels`
-- [ ] Create `.env.example` file and install dependencies: Express/Flask, React/Vue, Prisma/Sequelize/SQLAlchemy, JWT auth library
+- [x] Create `.env.example` file and install dependencies: Express/Flask, React/Vue, Prisma/Sequelize/SQLAlchemy, JWT auth library
 
 ## Phase 2: Core Backend & Authentication
 - [ ] Implement user registration/login endpoints with JWT token generation using bcrypt for password hashing
