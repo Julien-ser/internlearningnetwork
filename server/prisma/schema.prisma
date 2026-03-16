@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts       Post[]
+  userSkills  UserSkill[]
+  pointsLog   PointsLog[]
+  level       Int      @default(1)
+  totalPoints Int     @default(0)
+
+  @@map("users")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author    User         @relation(fields: [authorId], references: [id])
+  postSkills PostSkill[]
+  pointsLog PointsLog[]
+
+  @@map("posts")
+}
+
+model Skill {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  postSkills  PostSkill[]
+  userSkills  UserSkill[]
+
+  @@map("skills")
+}
+
+model PostSkill {
+  postId    Int
+  skillId   Int
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id])
+  skill     Skill    @relation(fields: [skillId], references: [id])
+
+  @@id([postId, skillId])
+  @@map("post_skills")
+}
+
+model UserSkill {
+  userId       Int
+  skillId      Int
+  sourcePostId Int?
+  claimedAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+  skill        Skill    @relation(fields: [skillId], references: [id])
+  sourcePost   Post?    @relation(fields: [sourcePostId], references: [id])
+
+  @@id([userId, skillId])
+  @@map("user_skills")
+}
+
+model PointsLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  points       Int
+  actionType   String   // 'create_post', 'claim_skill', etc.
+  referenceId  Int?     // post_id or skill_id
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+  post         Post?    @relation(fields: [referenceId], references: [id], fields: [referenceId])
+
+  @@map("points_log")
+}
