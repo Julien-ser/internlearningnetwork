@@ -2,7 +2,9 @@
 **Mission:** Allows interns all over the place to share anything they found/learned in a new blog-like system, with a gamified way of levelling up with new skills and points and also points for sharing something that gives other users skills.
 
 ## Phase 1: Planning & Setup
-- [ ] Define technical stack (Node.js + Express or Python + Flask/Django, React/Vue frontend, PostgreSQL) and create architecture diagram
+- [x] **Technical Stack Decision**: Node.js + Express (backend), React (frontend), PostgreSQL (database), Prisma (ORM), JWT (authentication)
+  - **Architecture**: Monorepo with `/client` (React + Vite), `/server` (Express + Prisma), `/shared` (TypeScript types/validations)
+  - **Database Schema**: users, posts, skills, user_skills, points_log, levels tables
 - [ ] Set up monorepo structure with `/client`, `/server`, and `/shared` directories; initialize Git repository
 - [ ] Design database schema with tables: `users`, `posts`, `skills`, `user_skills`, `points_log`, `levels`
 - [ ] Create `.env.example` file and install dependencies: Express/Flask, React/Vue, Prisma/Sequelize/SQLAlchemy, JWT auth library
