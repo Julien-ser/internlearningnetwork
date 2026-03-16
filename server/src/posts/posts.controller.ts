@@ -317,6 +317,7 @@ export const updatePost = async (req: PostsRequest, res: Response) => {
       author: postWithSkills!.author,
       createdAt: postWithSkills!.createdAt,
       updatedAt: postWithSkills!.updatedAt,
+      approved: postWithSkills!.approved,
       skill_tags: postWithSkills!.postSkills.map(ps => ps.skill)
     }
 
