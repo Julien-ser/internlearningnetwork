@@ -1,6 +1,8 @@
 import request from 'supertest'
+import { Request, Response, NextFunction } from 'express'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
+import { User, Level } from '@prisma/client'
 
 const mockAuthUser = {
   id: 1,
@@ -10,9 +12,17 @@ const mockAuthUser = {
 
 const mockAuthToken = 'mock-jwt-token'
 
+interface AuthenticatedRequest extends Request {
+  user?: typeof mockAuthUser
+}
+
+interface UserWithLevel extends User {
+  level: Level
+}
+
 // Mock the authenticate middleware BEFORE app loads
 jest.mock('../auth/auth.middleware', () => ({
-  authenticate: (req: any, res: any, next: any) => {
+  authenticate: (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'No token provided' })
@@ -49,7 +59,7 @@ describe('Levels Controller', () => {
         }
       }
 
-      prisma.user.findUnique.mockResolvedValue(mockUser as any)
+      prisma.user.findUnique.mockResolvedValue(mockUser as unknown as UserWithLevel)
 
       const response = await request(app)
         .get('/api/level?userId=1')
@@ -70,7 +80,7 @@ describe('Levels Controller', () => {
         }
       }
 
-      prisma.user.findUnique.mockResolvedValue(mockUser as any)
+      prisma.user.findUnique.mockResolvedValue(mockUser as unknown as UserWithLevel)
 
       const response = await request(app)
         .get('/api/level?userId=1')

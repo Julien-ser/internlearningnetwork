@@ -78,18 +78,18 @@ describe('Claims Controller', () => {
       expect(response.body.postId).toBe(1)
     })
 
-    it('should return 400 if claiming from own post', async () => {
-      const postSkill = {
-        postId: 1,
-        skillId: 1,
-        post: {
-          id: 1,
-          title: 'Test Post',
-          authorId: mockClaimerUser.id // Same as claimer
-        }
-      }
+     it('should return 400 if claiming from own post', async () => {
+       const postSkill = {
+         postId: 1,
+         skillId: 1,
+         post: {
+           id: 1,
+           title: 'Test Post',
+           authorId: mockClaimerUser.id // Same as claimer
+         }
+       }
 
-      prisma.postSkill.findUnique.mockResolvedValue(postSkill as any)
+       prisma.postSkill.findUnique.mockResolvedValue(postSkill as unknown as PostSkill)
 
       const response = await request(app)
         .post('/api/claims/posts/1/skills/1/claim')
@@ -99,19 +99,19 @@ describe('Claims Controller', () => {
       expect(response.body.error).toBe('Cannot claim skill from your own post')
     })
 
-    it('should return 400 if user already has the skill', async () => {
-      const postSkill = {
-        postId: 1,
-        skillId: 1,
-        post: {
-          id: 1,
-          title: 'Test Post',
-          authorId: mockAuthorUser.id
-        }
-      }
+     it('should return 400 if user already has the skill', async () => {
+       const postSkill = {
+         postId: 1,
+         skillId: 1,
+         post: {
+           id: 1,
+           title: 'Test Post',
+           authorId: mockAuthorUser.id
+         }
+       }
 
-      prisma.postSkill.findUnique.mockResolvedValue(postSkill as any)
-      prisma.userSkill.findUnique.mockResolvedValue({} as any) // User already has skill
+       prisma.postSkill.findUnique.mockResolvedValue(postSkill as unknown as PostSkill)
+       prisma.userSkill.findUnique.mockResolvedValue({} as unknown as UserSkill)
 
       const response = await request(app)
         .post('/api/claims/posts/1/skills/1/claim')
@@ -153,7 +153,7 @@ describe('Claims Controller', () => {
         }
       ]
 
-      prisma.userSkill.findMany.mockResolvedValue(userSkills as any)
+       prisma.userSkill.findMany.mockResolvedValue(userSkills as unknown as UserSkill[])
 
       const response = await request(app)
         .get('/api/claims/user/skills')
