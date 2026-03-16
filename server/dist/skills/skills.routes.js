@@ -43,7 +43,7 @@ const validateUpdateSkill = (req, res, next) => {
 router.get('/', skills_controller_1.getAllSkills);
 router.get('/:id', skills_controller_1.getSkillById);
 // Protected routes (require authentication - admin only in future)
-router.post('/', skills_controller_1.createSkill); // Could add authenticate middleware later
+router.post('/', validateCreateSkill, skills_controller_1.createSkill);
 router.put('/:id', validateUpdateSkill, skills_controller_1.updateSkill);
 router.delete('/:id', skills_controller_1.deleteSkill);
 exports.default = router;

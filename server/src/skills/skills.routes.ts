@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import {
   getAllSkills,
   getSkillById,
@@ -6,12 +6,12 @@ import {
   updateSkill,
   deleteSkill
 } from './skills.controller'
-import { updateSkillSchema } from './skills.validation'
+import { createSkillSchema, updateSkillSchema } from './skills.validation'
 
 const router = Router()
 
 // Validation middleware using Zod
-const validateCreateSkill = (req: any, res: any, next: any) => {
+const validateCreateSkill = (req: Request, res: Response, next: NextFunction) => {
   try {
     createSkillSchema.parse(req.body)
     next()
@@ -26,7 +26,7 @@ const validateCreateSkill = (req: any, res: any, next: any) => {
   }
 }
 
-const validateUpdateSkill = (req: any, res: any, next: any) => {
+const validateUpdateSkill = (req: Request, res: Response, next: NextFunction) => {
   try {
     // For updates, all fields are optional, so we need to check if body has any fields
     if (Object.keys(req.body).length === 0) {
@@ -50,7 +50,7 @@ router.get('/', getAllSkills)
 router.get('/:id', getSkillById)
 
 // Protected routes (require authentication - admin only in future)
-router.post('/', createSkill) // Could add authenticate middleware later
+router.post('/', validateCreateSkill, createSkill)
 router.put('/:id', validateUpdateSkill, updateSkill)
 router.delete('/:id', deleteSkill)
 
