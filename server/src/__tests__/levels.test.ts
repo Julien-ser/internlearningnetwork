@@ -174,17 +174,18 @@ describe('Levels Controller', () => {
         }
       }
 
-      prisma.user.findUnique
-        .mockResolvedValueOnce(mockUser as any) // first call
-        .mockResolvedValueOnce(updatedUser as any) // second call after update
-      prisma.level.findUnique.mockResolvedValue({
-        id: 5,
-        levelNumber: 5,
-        name: 'Level 5',
-        minPoints: 337,
-        maxPoints: 505
-      } as any)
-      prisma.user.update.mockResolvedValue({} as any)
+       prisma.user.findUnique
+         .mockResolvedValueOnce(mockUser as unknown as UserWithLevel) // first call
+         .mockResolvedValueOnce(updatedUser as unknown as UserWithLevel) // second call after update
+       prisma.level.findUnique.mockResolvedValue({
+         id: 5,
+         levelNumber: 5,
+         name: 'Level 5',
+         minPoints: 337,
+         maxPoints: 505,
+         createdAt: new Date()
+       } as unknown as Level)
+        prisma.user.update.mockResolvedValue({} as unknown as User)
 
       const response = await request(app)
         .post('/api/level/update?userId=1')
@@ -206,16 +207,17 @@ describe('Levels Controller', () => {
         }
       }
 
-      prisma.user.findUnique.mockResolvedValue(mockUser as any)
+      prisma.user.findUnique.mockResolvedValue(mockUser as unknown as UserWithLevel)
       prisma.level.findUnique.mockResolvedValue(null)
       prisma.level.create.mockResolvedValue({
         id: 10,
         levelNumber: 10,
         name: 'Level 10',
         minPoints: 2562,
-        maxPoints: null
+        maxPoints: null,
+        createdAt: new Date()
       })
-       prisma.user.update.mockResolvedValue({} as any)
+       prisma.user.update.mockResolvedValue({} as unknown as User)
 
        await request(app)
          .post('/api/level/update?userId=1')
@@ -236,15 +238,15 @@ describe('Levels Controller', () => {
         }
       }
 
-      prisma.user.findUnique.mockResolvedValue(mockUser as any)
+       prisma.user.findUnique.mockResolvedValue(mockUser as unknown as UserWithLevel)
 
-      const response = await request(app)
-        .post('/api/level/update?userId=1')
-        .set('Authorization', `Bearer ${mockAuthToken}`)
-        .expect(200)
+       const response = await request(app)
+         .post('/api/level/update?userId=1')
+         .set('Authorization', `Bearer ${mockAuthToken}`)
+         .expect(200)
 
-      expect(response.body.currentLevel).toBe(3)
-      expect(prisma.user.update).not.toHaveBeenCalled()
+       expect(response.body.currentLevel).toBe(3)
+       expect(prisma.user.update).not.toHaveBeenCalled()
     })
 
     it('should return 400 if userId is missing', async () => {
