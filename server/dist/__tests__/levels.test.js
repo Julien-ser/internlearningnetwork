@@ -148,7 +148,8 @@ describe('Levels Controller', () => {
                 levelNumber: 5,
                 name: 'Level 5',
                 minPoints: 337,
-                maxPoints: 505
+                maxPoints: 505,
+                createdAt: new Date()
             });
             setup_1.prisma.user.update.mockResolvedValue({});
             const response = await (0, supertest_1.default)(index_1.app)
@@ -175,7 +176,8 @@ describe('Levels Controller', () => {
                 levelNumber: 10,
                 name: 'Level 10',
                 minPoints: 2562,
-                maxPoints: null
+                maxPoints: null,
+                createdAt: new Date()
             });
             setup_1.prisma.user.update.mockResolvedValue({});
             await (0, supertest_1.default)(index_1.app)

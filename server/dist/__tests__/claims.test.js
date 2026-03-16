@@ -87,7 +87,7 @@ describe('Claims Controller', () => {
                 }
             };
             setup_1.prisma.postSkill.findUnique.mockResolvedValue(postSkill);
-            setup_1.prisma.userSkill.findUnique.mockResolvedValue({}); // User already has skill
+            setup_1.prisma.userSkill.findUnique.mockResolvedValue({});
             const response = await (0, supertest_1.default)(index_1.app)
                 .post('/api/claims/posts/1/skills/1/claim')
                 .set('Authorization', `Bearer ${mockAuthToken}`)
