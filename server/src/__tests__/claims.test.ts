@@ -1,6 +1,5 @@
 import request from 'supertest'
 import { Request, Response, NextFunction } from 'express'
-import { PrismaClient } from '@prisma/client'
 import { app } from '../index'
 import { prisma, resetMocks } from './setup'
 import { User, PostSkill, UserSkill, PointsLog } from '@prisma/client'

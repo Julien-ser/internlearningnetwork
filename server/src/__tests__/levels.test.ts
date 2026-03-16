@@ -205,14 +205,14 @@ describe('Levels Controller', () => {
         minPoints: 2562,
         maxPoints: null
       })
-      prisma.user.update.mockResolvedValue({} as any)
+       prisma.user.update.mockResolvedValue({} as any)
 
-      const response = await request(app)
-        .post('/api/level/update?userId=1')
-        .set('Authorization', `Bearer ${mockAuthToken}`)
-        .expect(200)
+       await request(app)
+         .post('/api/level/update?userId=1')
+         .set('Authorization', `Bearer ${mockAuthToken}`)
+         .expect(200)
 
-      expect(prisma.level.create).toHaveBeenCalled()
+       expect(prisma.level.create).toHaveBeenCalled()
     })
 
     it('should not update if level has not changed', async () => {

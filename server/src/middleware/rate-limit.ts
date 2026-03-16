@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit'
-import { Request, RequestHandler } from 'express'
+import { RequestHandler } from 'express'
 
 // General API rate limiter: 100 requests per 15 minutes
 export const generalRateLimiter: RequestHandler = rateLimit({

@@ -38,7 +38,7 @@ export const errorHandler = (
   err: LogError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const statusCode = err.statusCode || 500
   const message = err.message || 'Internal server error'
