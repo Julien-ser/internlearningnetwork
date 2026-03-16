@@ -35,11 +35,12 @@ model Post {
   content   String
   authorId  Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
 
   author    User         @relation(fields: [authorId], references: [id])
   postSkills PostSkill[]
   pointsLog PointsLog[]
+  userSkills UserSkill[]  // Added for sourcePost relation
 
   @@map("posts")
 }
@@ -52,6 +53,7 @@ model Skill {
 
   postSkills  PostSkill[]
   userSkills  UserSkill[]
+  pointsLog   PointsLog[]  // Added for PointsLog relation
 
   @@map("skills")
 }
@@ -93,4 +95,20 @@ model Level {
   users        User[]
 
   @@map("levels")
+}
+
+model PointsLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int?
+  skillId   Int?
+  points    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id])
+  skill     Skill?   @relation(fields: [skillId], references: [id])
+
+  @@map("points_log")
 }
