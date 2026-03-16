@@ -22,7 +22,7 @@ const validate = (schema, options) => {
         catch (error) {
             if (error instanceof zod_1.z.ZodError) {
                 return res.status(400).json({
-                    error: 'Validation failed',
+                    error: error.errors[0].message,
                     details: error.errors.map(e => ({
                         field: e.path.join('.'),
                         message: e.message
@@ -46,7 +46,7 @@ const validateUpdate = (schema) => {
         catch (error) {
             if (error instanceof zod_1.z.ZodError) {
                 return res.status(400).json({
-                    error: 'Validation failed',
+                    error: error.errors[0].message,
                     details: error.errors.map(e => ({
                         field: e.path.join('.'),
                         message: e.message

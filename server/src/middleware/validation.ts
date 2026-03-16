@@ -18,7 +18,7 @@ export const validate = <T extends z.ZodSchema>(schema: T, options?: { source?: 
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({
-          error: 'Validation failed',
+          error: error.errors[0].message,
           details: error.errors.map(e => ({
             field: e.path.join('.'),
             message: e.message
@@ -41,7 +41,7 @@ export const validateUpdate = <T extends z.ZodSchema>(schema: T) => {
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({
-          error: 'Validation failed',
+          error: error.errors[0].message,
           details: error.errors.map(e => ({
             field: e.path.join('.'),
             message: e.message

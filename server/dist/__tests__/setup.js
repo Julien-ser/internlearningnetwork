@@ -62,6 +62,12 @@ jest.mock('@prisma/client', () => {
         PrismaClient: jest.fn().mockImplementation(() => prismaMock),
     };
 });
+jest.mock('../middleware/rate-limit', () => ({
+    generalRateLimiter: (req, res, next) => next(),
+    authRateLimiter: (req, res, next) => next(),
+    claimRateLimiter: (req, res, next) => next(),
+    postCreationRateLimiter: (req, res, next) => next(),
+}));
 // Export mocks
 exports.prisma = prismaMock;
 exports.bcrypt = bcryptMock;

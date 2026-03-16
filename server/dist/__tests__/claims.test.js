@@ -49,7 +49,7 @@ describe('Claims Controller', () => {
             setup_1.prisma.user.update.mockResolvedValue({});
             setup_1.prisma.pointsLog.create.mockResolvedValue({});
             setup_1.prisma.$transaction.mockImplementation(async (callback) => {
-                return callback(setup_1.prisma);
+                return await callback(setup_1.prisma);
             });
             const response = await (0, supertest_1.default)(index_1.app)
                 .post('/api/claims/posts/1/skills/1/claim')

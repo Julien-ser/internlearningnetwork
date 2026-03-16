@@ -46,7 +46,7 @@ router.get('/', posts_controller_1.getAllPosts);
 router.get('/:id', posts_controller_1.getPostById);
 // Protected routes (require authentication)
 router.post('/', auth_middleware_1.authenticate, rate_limit_1.postCreationRateLimiter, validateCreatePost, posts_controller_1.createPost);
-router.put('/:id', auth_middleware_1.authenticate, posts_controller_1.updatePost);
+router.put('/:id', auth_middleware_1.authenticate, validateUpdatePost, posts_controller_1.updatePost);
 router.delete('/:id', auth_middleware_1.authenticate, posts_controller_1.deletePost);
 // Approve post endpoint (assigns skills to author)
 router.put('/:id/approve', auth_middleware_1.authenticate, posts_controller_1.approvePost);

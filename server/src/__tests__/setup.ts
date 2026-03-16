@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { Request, Response, NextFunction } from 'express'
 
 // Mock bcrypt
 const bcryptMock = {
@@ -59,6 +60,13 @@ jest.mock('@prisma/client', () => {
     PrismaClient: jest.fn().mockImplementation(() => prismaMock),
   }
 })
+
+jest.mock('../middleware/rate-limit', () => ({
+  generalRateLimiter: (req: Request, res: Response, next: NextFunction) => next(),
+  authRateLimiter: (req: Request, res: Response, next: NextFunction) => next(),
+  claimRateLimiter: (req: Request, res: Response, next: NextFunction) => next(),
+  postCreationRateLimiter: (req: Request, res: Response, next: NextFunction) => next(),
+}))
 
 // Export mocks
 export const prisma = prismaMock

@@ -54,7 +54,7 @@ router.get('/:id', getPostById)
 
 // Protected routes (require authentication)
 router.post('/', authenticate, postCreationRateLimiter, validateCreatePost, createPost)
-router.put('/:id', authenticate, updatePost)
+router.put('/:id', authenticate, validateUpdatePost, updatePost)
 router.delete('/:id', authenticate, deletePost)
 
 // Approve post endpoint (assigns skills to author)
