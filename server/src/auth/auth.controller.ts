@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -105,10 +105,10 @@ export const login = async (req: Request, res: Response) => {
       })
     }
 
+     const secret = Buffer.from(process.env.JWT_SECRET || 'default-secret')
      const token = jwt.sign(
        { userId: user.id, email: user.email, username: user.username },
-       process.env.JWT_SECRET || 'default-secret',
-       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+       secret
      )
 
     const { password: _, ...userWithoutPassword } = user
