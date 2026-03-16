@@ -178,7 +178,7 @@ describe('Levels Controller', () => {
                 maxPoints: null
             });
             setup_1.prisma.user.update.mockResolvedValue({});
-            const response = await (0, supertest_1.default)(index_1.app)
+            await (0, supertest_1.default)(index_1.app)
                 .post('/api/level/update?userId=1')
                 .set('Authorization', `Bearer ${mockAuthToken}`)
                 .expect(200);
