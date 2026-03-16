@@ -383,3 +383,124 @@ Task completed! The point allocation logic was already implemented:
 
 I've marked the task as complete in TASKS.md and pushed the changes to GitHub.
 📝 Log saved: logs/iteration-34.md
+📊 Token Usage: 5250 / Session: 16750 / 64000
+Unstaged changes after reset:
+M	logs/worker-session-20260316-161231.log
+✅ Changes committed
+To https://github.com/Julien-ser/internlearningnetwork.git
+   7cd004c..c69e86a  main -> main
+✅ Pushed to GitHub
+📊 Updated Tasks: 8/16 completed, 8 remaining
+   Next task: Design leveling algorithm (e.g., levels 1-10 based on total ...
+📍 Iteration 35 at Mon Mar 16 04:17:01 PM EDT 2026...
+🤖 OpenCode processing: Design leveling algorithm (e.g., levels 1-10 based on total points with exponential thresholds) and create `/api/level` endpoint to calculate user level
+[0m
+> build · stepfun/step-3.5-flash:free
+[0m
+[0m→ [0mRead .agent_role
+[0m→ [0mRead TASKS.md
+I'll check the agent role and read the TASKS.md to understand the current task.
+Good, I'm a generic developer. The next task is to design a leveling algorithm and create the `/api/level` endpoint. Let me first explore the project structure to understand the backend setup.
+[0m✱ [0mGlob "**/*.js"[90m 16 matches[0m
+[0m✱ [0mGlob "**/*.ts"[90m 16 matches[0m
+[0m✱ [0mGlob "**/package.json"[90m 4 matches[0m
+[0m
+[0m$ [0mls -la
+total 320
+drwxr-xr-x   9 julien julien   4096 Mar 16 12:06 .
+drwxr-xr-x  24 julien julien   4096 Mar 16 11:36 ..
+-rw-r--r--   1 julien julien      8 Mar 16 16:12 .agent_role
+drwxr-xr-x   5 julien julien   4096 Mar 16 13:20 client
+-rw-r--r--   1 julien julien    286 Mar 16 11:41 .env.example
+drwxr-xr-x   7 julien julien   4096 Mar 16 16:16 .git
+drwxr-xr-x   3 julien julien   4096 Mar 16 11:36 .github
+-rw-r--r--   1 julien julien    532 Mar 16 11:42 .gitignore
+drwxr-xr-x   2 julien julien   4096 Mar 16 16:17 logs
+drwxr-xr-x 433 julien julien  16384 Mar 16 16:15 node_modules
+-rw-r--r--   1 julien julien    521 Mar 16 11:41 package.json
+-rw-r--r--   1 julien julien 225207 Mar 16 16:15 package-lock.json
+-rw-r--r--   1 julien julien   9218 Mar 16 11:36 prompt.txt
+-rw-r--r--   1 julien julien  11831 Mar 16 16:13 README.md
+drwxr-xr-x   5 julien julien   4096 Mar 16 16:15 server
+drwxr-xr-x   4 julien julien   4096 Mar 16 12:51 shared
+-rw-r--r--   1 julien julien   2779 Mar 16 16:16 TASKS.md
+-rw-r--r--   1 julien julien   2557 Mar 16 11:37 TASKS_original.md
+-rw-r--r--   1 julien julien      6 Mar 16 16:12 .worker_persistent_mode
+[0m
+[0m→ [0mRead server/src
+[0m→ [0mRead server/src/index.ts
+[0m→ [0mRead server/src/auth/auth.controller.ts
+Now let me explore the server structure to understand the existing pattern:
+Now let me check the Prisma schema to understand the database structure:
+[0m✱ [0mGlob "**/prisma/schema.prisma"[90m 1 match[0m
+[0m→ [0mRead server/prisma/schema.prisma
+Perfect! I can see the database schema already has a `Level` model with `levelNumber`, `minPoints`, `maxPoints`, and `name`. Users have `totalPoints` and `levelId`. 
+
+Let me design the leveling algorithm and then create the `/api/level` endpoint.
+
+**Leveling Algorithm Design:**
+- Exponential growth with levels 1-10
+- Formula: `minPoints = base * (multiplier ^ (level - 1))` where base=100, multiplier=1.5
+- This creates thresholds: L1(0), L2(150), L3(225), L4(338), L5(507), L6(761), L7(1142), L8(1713), L9(2570), L10(3855)
+
+Let me first check if there's already a level.routes.ts or level.controller.ts file:
+[0m
+[0m$ [0mls -la /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/
+total 28
+drwxr-xr-x 6 julien julien 4096 Mar 16 12:25 .
+drwxr-xr-x 5 julien julien 4096 Mar 16 16:15 ..
+drwxr-xr-x 2 julien julien 4096 Mar 16 11:51 auth
+drwxr-xr-x 2 julien julien 4096 Mar 16 12:28 claims
+-rw-r--r-- 1 julien julien  763 Mar 16 13:10 index.ts
+drwxr-xr-x 2 julien julien 4096 Mar 16 11:59 posts
+drwxr-xr-x 2 julien julien 4096 Mar 16 12:26 skills
+[0m
+I need to create a new `levels` module. Let me create the level controller with the exponential algorithm:
+[0m← [0mWrite server/src/levels/levels.controller.ts
+Wrote file successfully.
+[0m
+Now create the routes file:
+[0m← [0mWrite server/src/levels/levels.routes.ts
+Wrote file successfully.
+[0m
+Now add the levels route to index.ts:
+[0m← [0mEdit server/src/index.ts
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/index.ts
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/index.ts
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/index.ts
+@@ -4,8 +4,9 @@
+ import authRoutes from './auth/auth.routes'
+ import postsRoutes from './posts/posts.routes'
+ import skillsRoutes from './skills/skills.routes'
+ import claimsRoutes from './claims/claims.routes'
++import levelsRoutes from './levels/levels.routes'
+ 
+ const app = express()
+ const PORT = process.env.PORT || 3001
+ 
+
+[0m
+[0m← [0mEdit server/src/index.ts
+Index: /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/index.ts
+===================================================================
+--- /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/index.ts
++++ /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server/src/index.ts
+@@ -21,8 +21,9 @@
+ app.use('/api/auth', authRoutes)
+ app.use('/api/posts', postsRoutes)
+ app.use('/api/skills', skillsRoutes)
+ app.use('/api/claims', claimsRoutes)
++app.use('/api/level', levelsRoutes)
+ 
+ app.listen(PORT, () => {
+   // eslint-disable-next-line no-console
+   console.log(`Server running on port ${PORT}`)
+
+[0m
+Now let's build the server to ensure it compiles:
+[0m$ [0mcd /home/julien/Desktop/Free-Wiggum-opencode/projects/internlearningnetwork/server && npm run build
+> internlearningnetwork-server@0.0.1 build
+> tsc
+[0m
+📝 Log saved: logs/iteration-35.md

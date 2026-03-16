@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const skills_controller_1 = require("./skills.controller");
 const skills_validation_1 = require("./skills.validation");
+const auth_middleware_1 = require("../auth/auth.middleware");
 const router = (0, express_1.Router)();
 // Validation middleware using Zod
 const validateCreateSkill = (req, res, next) => {
@@ -43,7 +44,7 @@ const validateUpdateSkill = (req, res, next) => {
 router.get('/', skills_controller_1.getAllSkills);
 router.get('/:id', skills_controller_1.getSkillById);
 // Protected routes (require authentication - admin only in future)
-router.post('/', validateCreateSkill, skills_controller_1.createSkill);
-router.put('/:id', validateUpdateSkill, skills_controller_1.updateSkill);
-router.delete('/:id', skills_controller_1.deleteSkill);
+router.post('/', auth_middleware_1.authenticate, validateCreateSkill, skills_controller_1.createSkill);
+router.put('/:id', auth_middleware_1.authenticate, validateUpdateSkill, skills_controller_1.updateSkill);
+router.delete('/:id', auth_middleware_1.authenticate, skills_controller_1.deleteSkill);
 exports.default = router;

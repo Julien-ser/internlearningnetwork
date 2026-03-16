@@ -5,6 +5,7 @@ import authRoutes from './auth/auth.routes'
 import postsRoutes from './posts/posts.routes'
 import skillsRoutes from './skills/skills.routes'
 import claimsRoutes from './claims/claims.routes'
+import levelsRoutes from './levels/levels.routes'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/posts', postsRoutes)
 app.use('/api/skills', skillsRoutes)
 app.use('/api/claims', claimsRoutes)
+app.use('/api/level', levelsRoutes)
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
