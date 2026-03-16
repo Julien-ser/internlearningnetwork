@@ -135,10 +135,16 @@ const createPost = async (req, res) => {
                 }
             }
         }
-        // Fetch updated post with skills
+        // Fetch updated post with skills and author
         const postWithSkills = await prisma.post.findUnique({
             where: { id: post.id },
             include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                },
                 postSkills: {
                     include: {
                         skill: true
@@ -231,10 +237,16 @@ const updatePost = async (req, res) => {
                 }
             }
         }
-        // Fetch updated post with skills
+        // Fetch updated post with skills and author
         const postWithSkills = await prisma.post.findUnique({
             where: { id: postId },
             include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                },
                 postSkills: {
                     include: {
                         skill: true
