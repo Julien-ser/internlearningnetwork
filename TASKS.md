@@ -6,7 +6,7 @@
   - **Architecture**: Monorepo with `/client` (React + Vite), `/server` (Express + Prisma), `/shared` (TypeScript types/validations)
   - **Database Schema**: users, posts, skills, user_skills, points_log, levels tables
 - [x] Set up monorepo structure with `/client`, `/server`, and `/shared` directories; initialize Git repository
-- [ ] Design database schema with tables: `users`, `posts`, `skills`, `user_skills`, `points_log`, `levels`
+- [x] Design database schema with tables: `users`, `posts`, `skills`, `user_skills`, `points_log`, `levels`
 - [ ] Create `.env.example` file and install dependencies: Express/Flask, React/Vue, Prisma/Sequelize/SQLAlchemy, JWT auth library
 
 ## Phase 2: Core Backend & Authentication

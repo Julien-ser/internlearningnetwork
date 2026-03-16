@@ -11,18 +11,20 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  username    String   @unique
+  password    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  levelId     Int      @default(1)
+  level       Level    @relation(fields: [levelId], references: [id])
+  totalPoints Int      @default(0)
 
   posts       Post[]
   userSkills  UserSkill[]
   pointsLog   PointsLog[]
-  level       Int      @default(1)
-  totalPoints Int     @default(0)
 
   @@map("users")
 }
@@ -80,16 +82,15 @@ model UserSkill {
   @@map("user_skills")
 }
 
-model PointsLog {
+model Level {
   id           Int      @id @default(autoincrement())
-  userId       Int
-  points       Int
-  actionType   String   // 'create_post', 'claim_skill', etc.
-  referenceId  Int?     // post_id or skill_id
+  levelNumber  Int      @unique
+  minPoints    Int
+  maxPoints    Int?
+  name         String?
   createdAt    DateTime @default(now())
 
-  user         User     @relation(fields: [userId], references: [id])
-  post         Post?    @relation(fields: [referenceId], references: [id], fields: [referenceId])
+  users        User[]
 
-  @@map("points_log")
+  @@map("levels")
 }
