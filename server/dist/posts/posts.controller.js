@@ -76,6 +76,7 @@ const getPostById = async (req, res) => {
             author: post.author,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
+            approved: post.approved,
             skill_tags: post.postSkills.map(ps => ps.skill)
         };
         res.json({ post: formattedPost });
@@ -282,6 +283,7 @@ const updatePost = async (req, res) => {
             author: postWithSkills.author,
             createdAt: postWithSkills.createdAt,
             updatedAt: postWithSkills.updatedAt,
+            approved: postWithSkills.approved,
             skill_tags: postWithSkills.postSkills.map(ps => ps.skill)
         };
         res.json({
