@@ -27,6 +27,7 @@ model User {
   pointsLog   PointsLog[]
 
   @@map("users")
+  @@index([levelId])
 }
 
 model Post {
@@ -44,6 +45,7 @@ model Post {
   userSkills UserSkill[]  // Added for sourcePost relation
 
   @@map("posts")
+  @@index([authorId])
 }
 
 model Skill {
@@ -83,6 +85,7 @@ model UserSkill {
 
   @@id([userId, skillId])
   @@map("user_skills")
+  @@index([sourcePostId])
 }
 
 model Level {
@@ -112,4 +115,7 @@ model PointsLog {
   skill     Skill?   @relation(fields: [skillId], references: [id])
 
   @@map("points_log")
+  @@index([userId])
+  @@index([postId])
+  @@index([skillId])
 }
