@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 
+interface DecodedToken {
+  userId: number;
+  email: string;
+  username: string;
+}
+
 export interface AuthRequest extends Request {
   user?: {
     id: number
@@ -23,7 +29,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
       return res.status(401).json({ error: 'No token provided' })
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as DecodedToken
 
     req.user = {
       id: decoded.userId,

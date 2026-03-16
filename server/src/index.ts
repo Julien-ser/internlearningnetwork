@@ -23,5 +23,6 @@ app.use('/api/skills', skillsRoutes)
 app.use('/api/claims', claimsRoutes)
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT}`)
 })

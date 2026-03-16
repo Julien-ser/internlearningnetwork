@@ -23,5 +23,6 @@ app.use('/api/posts', posts_routes_1.default);
 app.use('/api/skills', skills_routes_1.default);
 app.use('/api/claims', claims_routes_1.default);
 app.listen(PORT, () => {
+    // eslint-disable-next-line no-console
     console.log(`Server running on port ${PORT}`);
 });

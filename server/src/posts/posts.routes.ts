@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import { 
   getAllPosts, 
   getPostById, 
@@ -13,7 +13,7 @@ import { createPostSchema, updatePostSchema } from './posts.validation'
 const router = Router()
 
 // Validation middleware using Zod
-const validateCreatePost = (req: any, res: any, next: any) => {
+const validateCreatePost = (req: Request, res: Response, next: NextFunction) => {
   try {
     createPostSchema.parse(req.body)
     next()
@@ -28,7 +28,7 @@ const validateCreatePost = (req: any, res: any, next: any) => {
   }
 }
 
-const validateUpdatePost = (req: any, res: any, next: any) => {
+const validateUpdatePost = (req: Request, res: Response, next: NextFunction) => {
   try {
     // For updates, all fields are optional, so we need to check if body has any fields
     if (Object.keys(req.body).length === 0) {
