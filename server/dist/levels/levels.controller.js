@@ -7,8 +7,8 @@ const prisma = new client_1.PrismaClient();
  * Calculate level based on total points using exponential thresholds
  * Levels 1-10 with formula: base * (multiplier ^ (level - 1))
  * Base: 100, Multiplier: 1.5
- * L1: 0-149, L2: 150-224, L3: 225-337, L4: 338-506, L5: 507-760,
- * L6: 761-1141, L7: 1142-1712, L8: 1713-2570, L9: 2571-3855, L10: 3856+
+ * L1: 0-99, L2: 100-149, L3: 150-224, L4: 225-336, L5: 337-505,
+ * L6: 506-758, L7: 759-1138, L8: 1139-1707, L9: 1708-2561, L10: 2562+
  */
 const calculateLevel = (points) => {
     if (points < 0)

@@ -23,6 +23,6 @@
 
 ## Phase 4: Polish, Testing & Deployment
 - [x] Write unit tests for backend (Jest/Pytest) covering auth, post CRUD, point calculations, and skill claiming logic with 80%+ coverage
-- [ ] Add input validation, rate limiting, and CORS configuration; set up error logging middleware and sanitize user inputs
+- [x] Add input validation, rate limiting, and CORS configuration; set up error logging middleware and sanitize user inputs
 - [ ] Configure production database migrations, create seed data for demo skills, and optimize queries with indexes on foreign keys
 - [ ] Deploy to Vercel/Netlify (frontend) and Railway/Render (backend); create comprehensive README with setup instructions and API documentation

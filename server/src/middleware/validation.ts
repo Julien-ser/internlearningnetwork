@@ -1,10 +1,19 @@
 import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
 
-export const validate = <T extends z.ZodSchema>(schema: T) => {
+export const validate = <T extends z.ZodSchema>(schema: T, options?: { source?: 'body' | 'params' | 'query' }) => {
+  const source = options?.source || 'body'
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body)
+      let data: unknown
+      if (source === 'params') {
+        data = req.params
+      } else if (source === 'query') {
+        data = req.query
+      } else {
+        data = req.body
+      }
+      schema.parse(data)
       next()
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {

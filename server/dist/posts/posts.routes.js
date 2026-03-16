@@ -4,6 +4,7 @@ const express_1 = require("express");
 const posts_controller_1 = require("./posts.controller");
 const auth_middleware_1 = require("../auth/auth.middleware");
 const posts_validation_1 = require("./posts.validation");
+const rate_limit_1 = require("../middleware/rate-limit");
 const router = (0, express_1.Router)();
 // Validation middleware using Zod
 const validateCreatePost = (req, res, next) => {
@@ -44,8 +45,8 @@ const validateUpdatePost = (req, res, next) => {
 router.get('/', posts_controller_1.getAllPosts);
 router.get('/:id', posts_controller_1.getPostById);
 // Protected routes (require authentication)
-router.post('/', auth_middleware_1.authenticate, validateCreatePost, posts_controller_1.createPost);
-router.put('/:id', auth_middleware_1.authenticate, validateUpdatePost, posts_controller_1.updatePost);
+router.post('/', auth_middleware_1.authenticate, rate_limit_1.postCreationRateLimiter, validateCreatePost, posts_controller_1.createPost);
+router.put('/:id', auth_middleware_1.authenticate, posts_controller_1.updatePost);
 router.delete('/:id', auth_middleware_1.authenticate, posts_controller_1.deletePost);
 // Approve post endpoint (assigns skills to author)
 router.put('/:id/approve', auth_middleware_1.authenticate, posts_controller_1.approvePost);

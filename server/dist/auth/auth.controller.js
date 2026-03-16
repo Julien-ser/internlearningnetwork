@@ -157,6 +157,16 @@ const getProfile = async (req, res) => {
                     orderBy: {
                         claimedAt: 'desc'
                     }
+                },
+                pointsLog: {
+                    take: 10,
+                    orderBy: {
+                        createdAt: 'desc'
+                    },
+                    include: {
+                        skill: true,
+                        post: true
+                    }
                 }
             }
         });

@@ -1,0 +1,307 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const supertest_1 = __importDefault(require("supertest"));
+const index_1 = require("../index");
+const setup_1 = require("./setup");
+// Mock auth user constant
+const mockAuthUser = {
+    id: 1,
+    email: 'author@example.com',
+    username: 'author'
+};
+const mockAuthToken = 'mock-jwt-token';
+// Mock the authenticate middleware BEFORE app loads
+jest.mock('../auth/auth.middleware', () => ({
+    authenticate: (req, res, next) => {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'No token provided' });
+        }
+        req.user = mockAuthUser;
+        next();
+    }
+}));
+describe('Posts Controller', () => {
+    beforeEach(() => {
+        (0, setup_1.resetMocks)();
+    });
+    describe('GET /api/posts', () => {
+        it('should get all posts with skills', async () => {
+            const mockPosts = [
+                {
+                    id: 1,
+                    title: 'Test Post',
+                    content: 'Test content',
+                    authorId: 1,
+                    author: { id: 1, username: 'author' },
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    approved: false,
+                    postSkills: [
+                        { skill: { id: 1, name: 'TypeScript' } },
+                        { skill: { id: 2, name: 'React' } }
+                    ]
+                }
+            ];
+            setup_1.prisma.post.findMany.mockResolvedValue(mockPosts);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .get('/api/posts')
+                .expect(200);
+            expect(response.body.posts).toHaveLength(1);
+            expect(response.body.posts[0].skill_tags).toHaveLength(2);
+        });
+        it('should return empty array when no posts exist', async () => {
+            setup_1.prisma.post.findMany.mockResolvedValue([]);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .get('/api/posts')
+                .expect(200);
+            expect(response.body.posts).toEqual([]);
+        });
+    });
+    describe('GET /api/posts/:id', () => {
+        it('should get a single post by ID', async () => {
+            const mockPost = {
+                id: 1,
+                title: 'Test Post',
+                content: 'Test content',
+                authorId: 1,
+                author: { id: 1, username: 'author' },
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                approved: false,
+                postSkills: [
+                    { skill: { id: 1, name: 'Node.js' } }
+                ]
+            };
+            setup_1.prisma.post.findUnique.mockResolvedValue(mockPost);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .get('/api/posts/1')
+                .expect(200);
+            expect(response.body.post.id).toBe(1);
+            expect(response.body.post.title).toBe('Test Post');
+        });
+        it('should return 404 if post not found', async () => {
+            setup_1.prisma.post.findUnique.mockResolvedValue(null);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .get('/api/posts/999')
+                .expect(404);
+            expect(response.body.error).toBe('Post not found');
+        });
+    });
+    describe('POST /api/posts', () => {
+        it('should create a new post with skill tags', async () => {
+            const newPost = {
+                title: 'New Post',
+                content: 'New content',
+                skill_tags: [1, 2]
+            };
+            const createdPost = {
+                id: 1,
+                title: newPost.title,
+                content: newPost.content,
+                authorId: mockAuthUser.id,
+                author: { id: mockAuthUser.id, username: mockAuthUser.username },
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                approved: false,
+                postSkills: [
+                    { skill: { id: 1, name: 'Skill1' } },
+                    { skill: { id: 2, name: 'Skill2' } }
+                ]
+            };
+            setup_1.prisma.post.create.mockResolvedValue(createdPost);
+            setup_1.prisma.post.findUnique.mockResolvedValue(createdPost);
+            setup_1.prisma.skill.findUnique.mockResolvedValue({ id: 1, name: 'Skill1' });
+            setup_1.prisma.postSkill.upsert.mockResolvedValue({});
+            setup_1.prisma.user.update.mockResolvedValue({});
+            setup_1.prisma.pointsLog.create.mockResolvedValue({});
+            const response = await (0, supertest_1.default)(index_1.app)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send(newPost)
+                .expect(201);
+            expect(response.body.message).toBe('Post created successfully');
+            expect(response.body.post.title).toBe(newPost.title);
+        });
+        it('should return 400 if title is missing', async () => {
+            const response = await (0, supertest_1.default)(index_1.app)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send({ content: 'Content only' })
+                .expect(400);
+            expect(response.body.error).toBe('Validation failed');
+        });
+        it('should return 400 if content is missing', async () => {
+            const response = await (0, supertest_1.default)(index_1.app)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send({ title: 'Title only' })
+                .expect(400);
+            expect(response.body.error).toBe('Validation failed');
+        });
+        it('should award 10 points for creating post', async () => {
+            const newPost = {
+                title: 'New Post',
+                content: 'New content',
+            };
+            const createdPost = {
+                id: 1,
+                title: newPost.title,
+                content: newPost.content,
+                authorId: mockAuthUser.id,
+                author: { id: mockAuthUser.id, username: mockAuthUser.username },
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                approved: false,
+                postSkills: []
+            };
+            setup_1.prisma.post.create.mockResolvedValue(createdPost);
+            setup_1.prisma.post.findUnique.mockResolvedValue(createdPost);
+            setup_1.prisma.user.update.mockResolvedValue({});
+            setup_1.prisma.pointsLog.create.mockResolvedValue({});
+            await (0, supertest_1.default)(index_1.app)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send(newPost);
+            expect(setup_1.prisma.user.update).toHaveBeenCalledWith(expect.objectContaining({
+                data: { totalPoints: { increment: 10 } }
+            }));
+        });
+        it('should return 401 if not authenticated', async () => {
+            const response = await (0, supertest_1.default)(index_1.app)
+                .post('/api/posts')
+                .send({ title: 'Test', content: 'Content' })
+                .expect(401);
+            expect(response.body.error).toBe('No token provided');
+        });
+    });
+    describe('PUT /api/posts/:id', () => {
+        it('should update post successfully as author', async () => {
+            const existingPost = {
+                id: 1,
+                title: 'Original Title',
+                content: 'Original content',
+                authorId: mockAuthUser.id,
+                approved: false,
+            };
+            const updatedPost = {
+                id: 1,
+                title: 'Updated Title',
+                content: 'Updated content',
+                authorId: mockAuthUser.id,
+                author: { id: mockAuthUser.id, username: mockAuthUser.username },
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                approved: false,
+                postSkills: []
+            };
+            setup_1.prisma.post.findUnique.mockResolvedValue(existingPost);
+            setup_1.prisma.post.update.mockResolvedValue(updatedPost);
+            setup_1.prisma.post.findUnique.mockResolvedValue(updatedPost);
+            setup_1.prisma.postSkill.deleteMany.mockResolvedValue({});
+            const response = await (0, supertest_1.default)(index_1.app)
+                .put('/api/posts/1')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send({ title: 'Updated Title', content: 'Updated content' })
+                .expect(200);
+            expect(response.body.message).toBe('Post updated successfully');
+        });
+        it('should return 400 for empty update body', async () => {
+            const response = await (0, supertest_1.default)(index_1.app)
+                .put('/api/posts/1')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send({})
+                .expect(400);
+            expect(response.body.error).toBe('No update data provided');
+        });
+        it('should return 400 if title exceeds max length', async () => {
+            const response = await (0, supertest_1.default)(index_1.app)
+                .put('/api/posts/1')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send({ title: 'A'.repeat(201) })
+                .expect(400);
+            expect(response.body.error).toBe('Validation failed');
+        });
+        it('should return 403 if user is not the author', async () => {
+            const existingPost = {
+                id: 1,
+                title: 'Original Title',
+                content: 'Original content',
+                authorId: 999, // Different user
+                approved: false,
+            };
+            setup_1.prisma.post.findUnique.mockResolvedValue(existingPost);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .put('/api/posts/1')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .send({ title: 'Updated Title' })
+                .expect(403);
+            expect(response.body.error).toBe('Not authorized to update this post');
+        });
+    });
+    describe('DELETE /api/posts/:id', () => {
+        it('should delete post successfully as author', async () => {
+            const existingPost = {
+                id: 1,
+                title: 'To Delete',
+                authorId: mockAuthUser.id,
+            };
+            setup_1.prisma.post.findUnique.mockResolvedValue(existingPost);
+            setup_1.prisma.post.delete.mockResolvedValue({});
+            const response = await (0, supertest_1.default)(index_1.app)
+                .delete('/api/posts/1')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .expect(200);
+            expect(response.body.message).toBe('Post deleted successfully');
+        });
+        it('should return 404 if post does not exist', async () => {
+            setup_1.prisma.post.findUnique.mockResolvedValue(null);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .delete('/api/posts/999')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .expect(404);
+            expect(response.body.error).toBe('Post not found');
+        });
+    });
+    describe('PUT /api/posts/:id/approve', () => {
+        it('should approve post and assign skills to author', async () => {
+            const post = {
+                id: 1,
+                authorId: 2,
+                approved: false,
+                postSkills: [
+                    { skillId: 1, skill: { id: 1, name: 'Skill1' } }
+                ]
+            };
+            setup_1.prisma.post.findUnique.mockResolvedValue(post);
+            setup_1.prisma.post.update.mockResolvedValue({ id: 1, approved: true });
+            setup_1.prisma.userSkill.findUnique.mockResolvedValue(null);
+            setup_1.prisma.userSkill.create.mockResolvedValue({});
+            setup_1.prisma.$transaction.mockImplementation(async (callback) => {
+                return callback(setup_1.prisma);
+            });
+            const response = await (0, supertest_1.default)(index_1.app)
+                .put('/api/posts/1/approve')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .expect(200);
+            expect(response.body.message).toContain('Post approved successfully');
+        });
+        it('should return 400 if post is already approved', async () => {
+            const post = {
+                id: 1,
+                authorId: 2,
+                approved: true,
+                postSkills: []
+            };
+            setup_1.prisma.post.findUnique.mockResolvedValue(post);
+            const response = await (0, supertest_1.default)(index_1.app)
+                .put('/api/posts/1/approve')
+                .set('Authorization', `Bearer ${mockAuthToken}`)
+                .expect(400);
+            expect(response.body.error).toBe('Post is already approved');
+        });
+    });
+});
