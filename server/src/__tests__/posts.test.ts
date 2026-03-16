@@ -14,6 +14,10 @@ const mockAuthToken = 'mock-jwt-token'
 // Mock the authenticate middleware BEFORE app loads
 jest.mock('../auth/auth.middleware', () => ({
   authenticate: (req: any, res: any, next: any) => {
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' })
+    }
     req.user = mockAuthUser
     next()
   }
@@ -141,6 +145,26 @@ describe('Posts Controller', () => {
       expect(response.body.post.title).toBe(newPost.title)
     })
 
+    it('should return 400 if title is missing', async () => {
+      const response = await request(app)
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({ content: 'Content only' })
+        .expect(400)
+
+      expect(response.body.error).toBe('Validation failed')
+    })
+
+    it('should return 400 if content is missing', async () => {
+      const response = await request(app)
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({ title: 'Title only' })
+        .expect(400)
+
+      expect(response.body.error).toBe('Validation failed')
+    })
+
     it('should award 10 points for creating post', async () => {
       const newPost = {
         title: 'New Post',
@@ -220,6 +244,26 @@ describe('Posts Controller', () => {
         .expect(200)
 
       expect(response.body.message).toBe('Post updated successfully')
+    })
+
+    it('should return 400 for empty update body', async () => {
+      const response = await request(app)
+        .put('/api/posts/1')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({})
+        .expect(400)
+
+      expect(response.body.error).toBe('No update data provided')
+    })
+
+    it('should return 400 if title exceeds max length', async () => {
+      const response = await request(app)
+        .put('/api/posts/1')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({ title: 'A'.repeat(201) })
+        .expect(400)
+
+      expect(response.body.error).toBe('Validation failed')
     })
 
     it('should return 403 if user is not the author', async () => {

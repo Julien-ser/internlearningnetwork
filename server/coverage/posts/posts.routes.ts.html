@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/28</span>
+                <span class='fraction'>26/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.66% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/6</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/28</span>
+                <span class='fraction'>26/28</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -141,12 +141,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -156,16 +156,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -207,8 +207,8 @@ const validateCreatePost = (req: Request, res: Response, next: NextFunction) =&g
     createPostSchema.parse(req.body)
     next()
   } catch (error: unknown) {
-<span class="cstat-no" title="statement not covered" >    if (error instanceof Error) {</span>
-<span class="cstat-no" title="statement not covered" >      return res.status(400).json({ </span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (error instanceof Error) {
+      return res.status(400).json({ 
         error: 'Validation failed',
         details: error.message 
       })
@@ -220,14 +220,14 @@ const validateCreatePost = (req: Request, res: Response, next: NextFunction) =&g
 const validateUpdatePost = (req: Request, res: Response, next: NextFunction) =&gt; {
   try {
     // For updates, all fields are optional, so we need to check if body has any fields
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (Object.keys(req.body).length === 0) {
-<span class="cstat-no" title="statement not covered" >      return res.status(400).json({ error: 'No update data provided' })</span>
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({ error: 'No update data provided' })
     }
     updatePostSchema.parse(req.body)
     next()
   } catch (error: unknown) {
-<span class="cstat-no" title="statement not covered" >    if (error instanceof Error) {</span>
-<span class="cstat-no" title="statement not covered" >      return res.status(400).json({ </span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (error instanceof Error) {
+      return res.status(400).json({ 
         error: 'Validation failed',
         details: error.message 
       })
@@ -256,7 +256,7 @@ export default router
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-16T21:18:01.006Z
+                at 2026-03-16T21:21:43.605Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -22,7 +22,7 @@
 - [x] Implement skill claiming system: users can click skill tags on posts to "claim" them, awarding the post author points and adding skill to claimant's profile
 
 ## Phase 4: Polish, Testing & Deployment
-- [ ] Write unit tests for backend (Jest/Pytest) covering auth, post CRUD, point calculations, and skill claiming logic with 80%+ coverage
+- [x] Write unit tests for backend (Jest/Pytest) covering auth, post CRUD, point calculations, and skill claiming logic with 80%+ coverage
 - [ ] Add input validation, rate limiting, and CORS configuration; set up error logging middleware and sanitize user inputs
 - [ ] Configure production database migrations, create seed data for demo skills, and optimize queries with indexes on foreign keys
 - [ ] Deploy to Vercel/Netlify (frontend) and Railway/Render (backend); create comprehensive README with setup instructions and API documentation

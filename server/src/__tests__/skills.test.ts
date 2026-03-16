@@ -116,6 +116,26 @@ describe('Skills Controller', () => {
       expect(response.body.skill.name).toBe(newSkill.name)
     })
 
+    it('should return 400 if name is missing', async () => {
+      const response = await request(app)
+        .post('/api/skills')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({ description: 'No name' })
+        .expect(400)
+
+      expect(response.body.error).toBe('Validation failed')
+    })
+
+    it('should return 400 if name exceeds max length', async () => {
+      const response = await request(app)
+        .post('/api/skills')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({ name: 'A'.repeat(101), description: 'Too long name' })
+        .expect(400)
+
+      expect(response.body.error).toBe('Validation failed')
+    })
+
     it('should return 400 if skill with same name exists', async () => {
       const existingSkill = { id: 1, name: 'Existing Skill' }
       prisma.skill.findUnique.mockResolvedValue(existingSkill as any)
@@ -162,6 +182,26 @@ describe('Skills Controller', () => {
         .expect(200)
 
       expect(response.body.message).toBe('Skill updated successfully')
+    })
+
+    it('should return 400 for empty update body', async () => {
+      const response = await request(app)
+        .put('/api/skills/1')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({})
+        .expect(400)
+
+      expect(response.body.error).toBe('No update data provided')
+    })
+
+    it('should return 400 if name exceeds max length', async () => {
+      const response = await request(app)
+        .put('/api/skills/1')
+        .set('Authorization', `Bearer ${mockAuthToken}`)
+        .send({ name: 'A'.repeat(101) })
+        .expect(400)
+
+      expect(response.body.error).toBe('Validation failed')
     })
 
     it('should return 404 if skill not found', async () => {
