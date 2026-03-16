@@ -1,9 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import { 
-  getAllPosts, 
-  getPostById, 
-  createPost, 
-  updatePost, 
+import {
+  getAllPosts,
+  getPostById,
+  createPost,
+  updatePost,
   deletePost,
   approvePost
 } from './posts.controller'
